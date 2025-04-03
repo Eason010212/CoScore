@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulma 布局示例</title>
+    <link rel="stylesheet" href="static/bulma.min.css">
+    <link rel="stylesheet" href="static/font-awesome.min.css">
+    <link rel="stylesheet" href="static/main.css">
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <strong>CoScore</strong>
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" onclick="toggleSidebar()">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar menu p-4">
+            <p class="menu-label">General</p>
+            <ul class="menu-list">
+                <li><a href="#" class="is-active"><i class="fas fa-home mr-2"></i> Home</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar mr-2"></i> Tasks</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar mr-2"></i> Rules</a></li>
+                <li><a href="#"><i class="fas fa-chart-bar mr-2"></i> Data</a></li>
+            </ul>
+
+            <p class="menu-label">Guide</p>
+            <ul class="menu-list">
+                <li><a href="#"><i class="fas fa-home mr-2"></i> Manual</a></li>
+            </ul>
+
+            <p class="menu-label">Settings</p>
+            <ul class="menu-list">
+                <li><a href="#"><i class="fas fa-cog mr-2"></i> Model</a></li>
+                <li><a href="#"><i class="fas fa-users mr-2"></i> Export</a></li>
+            </ul>
+        </aside>
+
+        <!-- 右侧页面内容 -->
+        <main class="page-content">
+            <div class="container">
+                <h1 class="title">Welcome to CoScore!</h1>
+                <h2 class="subtitle">An LLM-Empowered Human-AI Collaborative Text Scoring Rule Generation and Calculation Engine</h2>
+
+                <div class="box">
+                    <p>这是一个基于 Bulma CSS 框架的响应式布局示例。</p>
+                    <p>在桌面端，左侧显示固定导航栏，右侧是内容区域；在移动端，导航栏会隐藏，点击顶部菜单按钮展开。</p>
+                </div>
+
+                <div class="columns mt-5">
+                    <div class="column">
+                        <div class="notification is-primary">
+                            <p class="title">Column 1</p>
+                            <p>Bulma 的 columns 布局非常方便</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="notification is-info">
+                            <p class="title">Column 2</p>
+                            <p>自动适应屏幕宽度</p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="notification is-success">
+                            <p class="title">Column 3</p>
+                            <p>无需额外 JavaScript</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="content has-text-centered">
+            <p>&copy; 2023 我的网站. 使用 <strong>Bulma</strong> 框架构建.</p>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端切换侧边栏
+        function toggleSidebar() {
+            document.body.classList.toggle('is-sidebar-open');
+            document.querySelector('.navbar-burger').classList.toggle('is-active');
+        }
+    </script>
+</body>
+</html>
