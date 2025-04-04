@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data - CoScore</title>
+    <link rel="stylesheet" href="static/bulma.min.css">
+    <link rel="stylesheet" href="static/font-awesome.min.css">
+    <link rel="stylesheet" href="static/main.css">
+    <style>
+        .dataset-card {
+            transition: transform 0.2s;
+        }
+        .dataset-card:hover {
+            transform: translateY(-3px);
+        }
+        .modal-content {
+            width: 80%;
+            max-width: 800px;
+        }
+        .textarea-csv {
+            font-family: monospace;
+            min-height: 300px;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        .tag-labeled {
+            background-color: #48c774 !important;
+        }
+        .tag-unlabeled {
+            background-color: #3273dc !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <strong>CoScore</strong>
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" onclick="toggleSidebar()">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar menu p-4">
+            <p class="menu-label">General</p>
+            <ul class="menu-list">
+                <li><a href="../"><i class="fas fa-home mr-2"></i> Home</a></li>
+                <li><a class="is-active" href="#"><i class="fas fa-table mr-2"></i> Data</a></li>
+                <li><a href="rules"><i class="fas fa-code mr-2"></i> Rules</a></li>
+                <li><a href="tasks"><i class="fas fa-tasks mr-2"></i> Tasks</a></li>
+            </ul>
+
+            <p class="menu-label">Guide</p>
+            <ul class="menu-list">
+                <li><a href="manual"><i class="fas fa-book mr-2"></i> Manual</a></li>
+            </ul>
+
+            <p class="menu-label">Settings</p>
+            <ul class="menu-list">
+                <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- 右侧页面内容 -->
+        <main class="page-content">
+            <div class="container">
+                <div class="level">
+                    <div class="level-left">
+                        <div>
+                            <h1 class="title">Data</h1>
+                            <h2 class="subtitle">Upload and manage answer data</h2>
+                        </div>
+                    </div>
+                    <div class="level-right">
+                        <button class="button is-primary" onclick="openNewDatasetModal()">
+                            <span class="icon"><i class="fas fa-plus"></i></span>
+                            <span>New Dataset</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dataset Cards -->
+                <div class="columns is-multiline">
+                    <!-- Sample Dataset 1 -->
+                    <div class="column is-one-third">
+                        <div class="card dataset-card">
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <p class="title is-4">Math Answers</p>
+                                        <p class="subtitle is-6">
+                                            <span class="tag is-light">100 items</span>
+                                            <span class="tag tag-labeled">Labeled</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p>Student answers to math problems with scores</p>
+                                    <time datetime="2023-05-15">Created: 2023-05-15</time>
+                                </div>
+                            </div>
+                            <footer class="card-footer">
+                                <a href="#" class="card-footer-item" onclick="viewDataset('Math Answers')">View</a>
+                                <a href="#" class="card-footer-item" onclick="editDataset('Math Answers')">Edit</a>
+                                <a href="#" class="card-footer-item" onclick="confirmDelete('Math Answers')">Delete</a>
+                            </footer>
+                        </div>
+                    </div>
+
+                    <!-- Sample Dataset 2 -->
+                    <div class="column is-one-third">
+                        <div class="card dataset-card">
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <p class="title is-4">History Essays</p>
+                                        <p class="subtitle is-6">
+                                            <span class="tag is-light">50 items</span>
+                                            <span class="tag tag-unlabeled">Unlabeled</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p>Unscored student essays about WWII</p>
+                                    <time datetime="2023-06-01">Created: 2023-06-01</time>
+                                </div>
+                            </div>
+                            <footer class="card-footer">
+                                <a href="#" class="card-footer-item" onclick="viewDataset('History Essays')">View</a>
+                                <a href="#" class="card-footer-item" onclick="editDataset('History Essays')">Edit</a>
+                                <a href="#" class="card-footer-item" onclick="confirmDelete('History Essays')">Delete</a>
+                            </footer>
+                        </div>
+                    </div>
+
+                    <!-- Sample Dataset 3 -->
+                    <div class="column is-one-third">
+                        <div class="card dataset-card">
+                            <div class="card-content">
+                                <div class="media">
+                                    <div class="media-content">
+                                        <p class="title is-4">Science Questions</p>
+                                        <p class="subtitle is-6">
+                                            <span class="tag is-light">75 items</span>
+                                            <span class="tag tag-labeled">Labeled</span>
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content">
+                                    <p>Physics questions with expert ratings</p>
+                                    <time datetime="2023-04-20">Created: 2023-04-20</time>
+                                </div>
+                            </div>
+                            <footer class="card-footer">
+                                <a href="#" class="card-footer-item" onclick="viewDataset('Science Questions')">View</a>
+                                <a href="#" class="card-footer-item" onclick="cloneDataset('Science Questions')">Clone</a>
+                                <a href="#" class="card-footer-item" onclick="confirmDelete('Science Questions')">Delete</a>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="has-text-centered py-6" id="emptyState" style="display: none;">
+                    <div class="box">
+                        <span class="icon is-large has-text-grey-light">
+                            <i class="fas fa-table fa-3x"></i>
+                        </span>
+                        <h3 class="title is-4 has-text-grey">No datasets yet</h3>
+                        <p class="subtitle">Get started by uploading your first dataset</p>
+                        <button class="button is-primary" onclick="openNewDatasetModal()">
+                            <span class="icon"><i class="fas fa-plus"></i></span>
+                            <span>Create Dataset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- New Dataset Modal -->
+    <div class="modal" id="newDatasetModal">
+        <div class="modal-background" onclick="closeModal('newDatasetModal')"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Create New Dataset</p>
+                <button class="delete" aria-label="close" onclick="closeModal('newDatasetModal')"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="field">
+                    <label class="label">Dataset Name</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="e.g. Math Problem Answers" id="datasetName">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Dataset Type</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                            <select id="datasetType">
+                                <option value="labeled">Labeled (text and score)</option>
+                                <option value="unlabeled">Unlabeled (text only)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Paste CSV Data</label>
+                    <div class="control">
+                        <textarea class="textarea textarea-csv" placeholder="Paste your CSV data here...
+For labeled data: text,score
+For unlabeled data: text" id="csvData"></textarea>
+                    </div>
+                    <p class="help">First row should be headers. Use comma separators.</p>
+                </div>
+
+                <div class="field">
+                    <label class="label">Or Upload CSV File</label>
+                    <div class="file has-name is-fullwidth">
+                        <label class="file-label">
+                            <input class="file-input" type="file" id="csvFile" accept=".csv">
+                            <span class="file-cta">
+                                <span class="file-icon">
+                                    <i class="fas fa-upload"></i>
+                                </span>
+                                <span class="file-label">
+                                    Choose a file…
+                                </span>
+                            </span>
+                            <span class="file-name" id="fileName">
+                                No file selected
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-success" onclick="createDataset()">Create Dataset</button>
+                <button class="button" onclick="closeModal('newDatasetModal')">Cancel</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- View Dataset Modal -->
+    <div class="modal" id="viewDatasetModal">
+        <div class="modal-background" onclick="closeModal('viewDatasetModal')"></div>
+        <div class="modal-content">
+            <div class="box">
+                <div class="level">
+                    <div class="level-left">
+                        <h3 class="title is-4" id="viewDatasetTitle">Dataset: Math Answers</h3>
+                    </div>
+                    <div class="level-right">
+                        <button class="button is-small" onclick="exportDataset()">
+                            <span class="icon"><i class="fas fa-download"></i></span>
+                            <span>Export</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table is-fullwidth is-striped is-hoverable">
+                        <thead>
+                            <tr id="viewDatasetHeaders">
+                                <th>Text</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="viewDatasetContent">
+                            <!-- Sample data rows will be inserted here by JavaScript -->
+                            <tr>
+                                <td>2+2 equals 4</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr>
+                                <td>The square root of 9 is 3</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr>
+                                <td>5 times 6 is 30</td>
+                                <td>1.0</td>
+                            </tr>
+                            <tr>
+                                <td>10 divided by 2 is 6</td>
+                                <td>0.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close" onclick="closeModal('viewDatasetModal')"></button>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteConfirmModal">
+        <div class="modal-background" onclick="closeModal('deleteConfirmModal')"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Confirm Delete</p>
+                <button class="delete" aria-label="close" onclick="closeModal('deleteConfirmModal')"></button>
+            </header>
+            <section class="modal-card-body">
+                <p>Are you sure you want to delete <strong id="datasetToDelete">Math Answers</strong>?</p>
+                <p class="has-text-danger">This action cannot be undone.</p>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button is-danger" onclick="deleteDataset()">Delete</button>
+                <button class="button" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Toggle sidebar on mobile
+        function toggleSidebar() {
+            document.body.classList.toggle('is-sidebar-open');
+            document.querySelector('.navbar-burger').classList.toggle('is-active');
+        }
+
+        // Modal functions
+        function openNewDatasetModal() {
+            document.getElementById('newDatasetModal').classList.add('is-active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('is-active');
+        }
+
+        function viewDataset(name) {
+            document.getElementById('viewDatasetTitle').textContent = `Dataset: ${name}`;
+            document.getElementById('viewDatasetModal').classList.add('is-active');
+            
+            // In a real app, you would fetch the dataset content here
+            // and populate the table dynamically
+        }
+
+        function editDataset(name) {
+            alert(`Edit functionality for ${name} would be implemented here`);
+            // In a real app, this would open an edit modal similar to the new dataset modal
+            // but pre-populated with the existing dataset's data
+        }
+
+        function cloneDataset(name) {
+            alert(`Clone functionality for ${name} would be implemented here`);
+            // This would open the new dataset modal with all fields pre-filled
+            // but with "(Copy)" appended to the name
+        }
+
+        function confirmDelete(name) {
+            document.getElementById('datasetToDelete').textContent = name;
+            document.getElementById('deleteConfirmModal').classList.add('is-active');
+        }
+
+        function deleteDataset() {
+            const name = document.getElementById('datasetToDelete').textContent;
+            alert(`In a real app, ${name} would be deleted now`);
+            closeModal('deleteConfirmModal');
+            // Here you would also remove the dataset card from the UI
+        }
+
+        function createDataset() {
+            const name = document.getElementById('datasetName').value;
+            const type = document.getElementById('datasetType').value;
+            const csvData = document.getElementById('csvData').value;
+            const file = document.getElementById('csvFile').files[0];
+            
+            if (!name) {
+                alert('Please enter a dataset name');
+                return;
+            }
+            
+            if (!csvData && !file) {
+                alert('Please either paste CSV data or upload a file');
+                return;
+            }
+            
+            // In a real app, you would validate the CSV and create the dataset
+            alert(`Creating ${type} dataset: ${name}`);
+            closeModal('newDatasetModal');
+            
+            // Reset form
+            document.getElementById('datasetName').value = '';
+            document.getElementById('csvData').value = '';
+            document.getElementById('fileName').textContent = 'No file selected';
+            document.getElementById('csvFile').value = '';
+        }
+
+        function exportDataset() {
+            alert('Export functionality would be implemented here');
+            // This would generate and download a CSV file of the current dataset
+        }
+
+        // Handle file input display
+        document.getElementById('csvFile').addEventListener('change', function(e) {
+            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+            document.getElementById('fileName').textContent = fileName;
+            
+            if (e.target.files[0]) {
+                // Read the file and populate the textarea
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    document.getElementById('csvData').value = event.target.result;
+                };
+                reader.readAsText(e.target.files[0]);
+            }
+        });
+
+        // Check if there are any datasets (for empty state)
+        window.addEventListener('DOMContentLoaded', function() {
+            // In a real app, you would check if there are actually datasets
+            // For now we're always showing the sample datasets
+            // document.getElementById('emptyState').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

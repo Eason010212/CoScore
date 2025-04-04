@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoScore</title>
+    <link rel="stylesheet" href="static/bulma.min.css">
+    <link rel="stylesheet" href="static/font-awesome.min.css">
+    <link rel="stylesheet" href="static/main.css">
+</head>
+<body>
+    <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <strong>CoScore</strong>
+            </a>
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" onclick="toggleSidebar()">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <aside class="sidebar menu p-4">
+            <p class="menu-label">General</p>
+            <ul class="menu-list">
+                <li><a href="#" class="is-active"><i class="fas fa-home mr-2"></i> Home</a></li>
+                <li><a href="data"><i class="fas fa-table mr-2"></i> Data</a></li>
+                <li><a href="rules"><i class="fas fa-code mr-2"></i> Rules</a></li>
+                <li><a href="tasks"><i class="fas fa-tasks mr-2"></i> Tasks</a></li>
+            </ul>
+
+            <p class="menu-label">Guide</p>
+            <ul class="menu-list">
+                <li><a href="manual"><i class="fas fa-book mr-2"></i> Manual</a></li>
+            </ul>
+
+            <p class="menu-label">Settings</p>
+            <ul class="menu-list">
+                <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- 右侧页面内容 -->
+        <main class="page-content">
+            <div class="container">
+                <h1 class="title">Welcome to CoScore!</h1>
+                <h2 class="subtitle">An LLM-Empowered Human-AI Collaborative Text Scoring Rule Generation and Calculation Engine</h2>
+
+                <div class="columns mt-5 is-vcentered cards-row">
+                    <div class="column">
+                        <a href="data" class="step-link">
+                            <div class="notification is-primary step-card">
+                                <p class="title"><i class="fas fa-table mr-2"></i> Step 1: Data</p>
+                                <p>Upload and manage answer data</p>
+                                <button class="button is-white mt-3">Get Started</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="column is-narrow step-arrow is-hidden-mobile"></div>
+                    <div class="column is-narrow step-arrow is-hidden-tablet"></div>
+                    
+                    <div class="column">
+                        <a href="rules" class="step-link">
+                            <div class="notification is-info step-card">
+                                <p class="title"><i class="fas fa-code mr-2"></i> Step 2: Rules</p>
+                                <p>Create scoring rules with the help of LLM</p>
+                                <button class="button is-white mt-3">Create Rules</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="column is-narrow step-arrow is-hidden-mobile"></div>
+                    <div class="column is-narrow step-arrow is-hidden-tablet"></div>
+                    
+                    <div class="column">
+                        <a href="tasks" class="step-link">
+                            <div class="notification is-success step-card">
+                                <p class="title"><i class="fas fa-tasks mr-2"></i> Step 3: Tasks</p>
+                                <p>Run scoring tasks and collect results</p>
+                                <button class="button is-white mt-3">Run Tasks</button>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- New row for Manual and Settings -->
+                <div class="columns is-vcentered">
+                    <div class="column is-half">
+                        <a href="manual" class="step-link">
+                            <div class="notification is-warning support-card">
+                                <p class="title"><i class="fas fa-book mr-2"></i> Manual</p>
+                                <p>Learn how to use CoScore effectively</p>
+                                <button class="button is-white mt-3">Read Guide</button>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="column is-half">
+                        <a href="settings" class="step-link">
+                            <div class="notification is-light support-card">
+                                <p class="title"><i class="fas fa-key mr-2"></i> LLM Settings</p>
+                                <p>Configure your LLM API keys and parameters</p>
+                                <button class="button is-white mt-3">Configure</button>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 移动端切换侧边栏
+        function toggleSidebar() {
+            document.body.classList.toggle('is-sidebar-open');
+            document.querySelector('.navbar-burger').classList.toggle('is-active');
+        }
+    </script>
+</body>
+</html>
