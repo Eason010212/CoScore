@@ -72,3 +72,48 @@ body {
 .cards-row {
     margin-bottom: 2rem;
 }
+.dataset-card {
+    transition: transform 0.2s;
+}
+.dataset-card:hover {
+    transform: translateY(-3px);
+}
+.modal-content {
+    width: 80%;
+    max-width: 800px;
+}
+.textarea-csv {
+    font-family: Monaco, Courier New, Consolas, Menlo, monospace;
+    min-height: 300px;
+}
+.table-container {
+    overflow-x: auto;
+}
+.tag-labeled {
+    background-color: #48c774 !important;
+}
+.tag-unlabeled {
+    background-color: #3273dc !important;
+}
+.content-section {
+    margin-bottom: 3rem;
+}
+.rule-example {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-family: Monaco, Courier New, Consolas, Menlo, monospace;
+    white-space: pre-wrap;
+}
+.example-table {
+    width: 100%;
+    margin: 1rem 0;
+}
+.example-table th {
+    background-color: #f0f0f0;
+}
+.operator-card {
+    margin-bottom: 1.5rem;
+    border-left: 4px solid #3273dc;
+}

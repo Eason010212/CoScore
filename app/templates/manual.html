@@ -7,30 +7,6 @@
     <link rel="stylesheet" href="static/bulma.min.css">
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
-    <style>
-        .content-section {
-            margin-bottom: 3rem;
-        }
-        .rule-example {
-            background-color: #f5f5f5;
-            padding: 1.5rem;
-            border-radius: 6px;
-            margin: 1rem 0;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
-        .example-table {
-            width: 100%;
-            margin: 1rem 0;
-        }
-        .example-table th {
-            background-color: #f0f0f0;
-        }
-        .operator-card {
-            margin-bottom: 1.5rem;
-            border-left: 4px solid #3273dc;
-        }
-    </style>
 </head>
 <body>
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
@@ -65,6 +41,11 @@
             <ul class="menu-list">
                 <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
             </ul>
+
+            <p class="menu-label">LINK</p>
+            <ul class="menu-list">
+                <li><a href="https://github.com/Eason010212/CoScore" target="_blank"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
+            </ul>
         </aside>
 
         <main class="page-content">
@@ -76,13 +57,11 @@
                     <h3 class="title is-4">1. Basic Structure</h3>
                     <p>The scoring rules use structured JSON format instead of natural language descriptions, consisting of three parts: atomic rules (atoms), combination rules (combos), and combination mode (comboMode), as shown in Example 1.</p>
                     
-                    <div class="rule-example">
-{
+                    <div class="rule-example">{
     "atoms": {...},
     "combos": {...},
     "comboMode": "ADD"
-}
-                    </div>
+}</div>
                     
                     <p>Where:</p>
                     <ul>
@@ -133,7 +112,7 @@
                         <tbody>
                             <tr>
                                 <td rowspan="4">
-                                    <pre>{
+                                    <pre class="rule-example">{
 "type": "EM",
 "desc": "greater than,>"
 }</pre>
@@ -176,7 +155,7 @@
                         <tbody>
                             <tr>
                                 <td rowspan="4">
-                                    <pre>{
+                                    <pre class="rule-example">{
 "type": "SM",
 "desc": "love,motherland|country"
 }</pre>
@@ -218,7 +197,7 @@
                         <tbody>
                             <tr>
                                 <td rowspan="4">
-                                    <pre>{
+                                    <pre class="rule-example">{
 "type": "OP",
 "desc": "0.4:around around down down back"
 }</pre>

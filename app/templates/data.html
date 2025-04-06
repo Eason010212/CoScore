@@ -7,31 +7,7 @@
     <link rel="stylesheet" href="static/bulma.min.css">
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
-    <style>
-        .dataset-card {
-            transition: transform 0.2s;
-        }
-        .dataset-card:hover {
-            transform: translateY(-3px);
-        }
-        .modal-content {
-            width: 80%;
-            max-width: 800px;
-        }
-        .textarea-csv {
-            font-family: monospace;
-            min-height: 300px;
-        }
-        .table-container {
-            overflow-x: auto;
-        }
-        .tag-labeled {
-            background-color: #48c774 !important;
-        }
-        .tag-unlabeled {
-            background-color: #3273dc !important;
-        }
-    </style>
+    <script src="static/jquery.min.js"></script>
 </head>
 <body>
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
@@ -66,6 +42,11 @@
             <ul class="menu-list">
                 <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
             </ul>
+
+            <p class="menu-label">LINK</p>
+            <ul class="menu-list">
+                <li><a href="https://github.com/Eason010212/CoScore" target="_blank"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
+            </ul>
         </aside>
 
         <!-- 右侧页面内容 -->
@@ -87,84 +68,8 @@
                 </div>
 
                 <!-- Dataset Cards -->
-                <div class="columns is-multiline">
-                    <!-- Sample Dataset 1 -->
-                    <div class="column is-one-third">
-                        <div class="card dataset-card">
-                            <div class="card-content">
-                                <div class="media">
-                                    <div class="media-content">
-                                        <p class="title is-4">Math Answers</p>
-                                        <p class="subtitle is-6">
-                                            <span class="tag is-light">100 items</span>
-                                            <span class="tag tag-labeled">Labeled</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="content">
-                                    <p>Student answers to math problems with scores</p>
-                                    <time datetime="2023-05-15">Created: 2023-05-15</time>
-                                </div>
-                            </div>
-                            <footer class="card-footer">
-                                <a href="#" class="card-footer-item" onclick="viewDataset('Math Answers')">View</a>
-                                <a href="#" class="card-footer-item" onclick="editDataset('Math Answers')">Edit</a>
-                                <a href="#" class="card-footer-item" onclick="confirmDelete('Math Answers')">Delete</a>
-                            </footer>
-                        </div>
-                    </div>
-
-                    <!-- Sample Dataset 2 -->
-                    <div class="column is-one-third">
-                        <div class="card dataset-card">
-                            <div class="card-content">
-                                <div class="media">
-                                    <div class="media-content">
-                                        <p class="title is-4">History Essays</p>
-                                        <p class="subtitle is-6">
-                                            <span class="tag is-light">50 items</span>
-                                            <span class="tag tag-unlabeled">Unlabeled</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="content">
-                                    <p>Unscored student essays about WWII</p>
-                                    <time datetime="2023-06-01">Created: 2023-06-01</time>
-                                </div>
-                            </div>
-                            <footer class="card-footer">
-                                <a href="#" class="card-footer-item" onclick="viewDataset('History Essays')">View</a>
-                                <a href="#" class="card-footer-item" onclick="editDataset('History Essays')">Edit</a>
-                                <a href="#" class="card-footer-item" onclick="confirmDelete('History Essays')">Delete</a>
-                            </footer>
-                        </div>
-                    </div>
-
-                    <!-- Sample Dataset 3 -->
-                    <div class="column is-one-third">
-                        <div class="card dataset-card">
-                            <div class="card-content">
-                                <div class="media">
-                                    <div class="media-content">
-                                        <p class="title is-4">Science Questions</p>
-                                        <p class="subtitle is-6">
-                                            <span class="tag is-light">75 items</span>
-                                            <span class="tag tag-labeled">Labeled</span>
-                                        </p>
-                                    </div>
-                                </div>
-                                <div class="content">
-                                    <p>Physics questions with expert ratings</p>
-                                    <time datetime="2023-04-20">Created: 2023-04-20</time>
-                                </div>
-                            </div>
-                            <footer class="card-footer">
-                                <a href="#" class="card-footer-item" onclick="viewDataset('Science Questions')">View</a>
-                                <a href="#" class="card-footer-item" onclick="cloneDataset('Science Questions')">Clone</a>
-                                <a href="#" class="card-footer-item" onclick="confirmDelete('Science Questions')">Delete</a>
-                            </footer>
-                        </div>
-                    </div>
+                <div class="columns is-multiline" id="datasetCards">
+                    
                 </div>
 
                 <!-- Empty State -->
@@ -177,7 +82,7 @@
                         <p class="subtitle">Get started by uploading your first dataset</p>
                         <button class="button is-primary" onclick="openNewDatasetModal()">
                             <span class="icon"><i class="fas fa-plus"></i></span>
-                            <span>Create Dataset</span>
+                            <span>New Dataset</span>
                         </button>
                     </div>
                 </div>
@@ -198,6 +103,13 @@
                     <label class="label">Dataset Name</label>
                     <div class="control">
                         <input class="input" type="text" placeholder="e.g. Math Problem Answers" id="datasetName">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label class="label">Dataset Description</label>
+                    <div class="control">
+                        <input class="input" type="text" placeholder="This dataset is ..." id="datasetDesc">
                     </div>
                 </div>
 
@@ -244,7 +156,7 @@ For unlabeled data: text" id="csvData"></textarea>
                 </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-success" onclick="createDataset()">Create Dataset</button>
+                <button class="button is-success" onclick="createDataset()" style="margin-right:10px">Create Dataset</button>
                 <button class="button" onclick="closeModal('newDatasetModal')">Cancel</button>
             </footer>
         </div>
@@ -257,7 +169,7 @@ For unlabeled data: text" id="csvData"></textarea>
             <div class="box">
                 <div class="level">
                     <div class="level-left">
-                        <h3 class="title is-4" id="viewDatasetTitle">Dataset: Math Answers</h3>
+                        <h3 class="title is-4" id="viewDatasetTitle"></h3>
                     </div>
                     <div class="level-right">
                         <button class="button is-small" onclick="exportDataset()">
@@ -271,28 +183,11 @@ For unlabeled data: text" id="csvData"></textarea>
                     <table class="table is-fullwidth is-striped is-hoverable">
                         <thead>
                             <tr id="viewDatasetHeaders">
-                                <th>Text</th>
-                                <th>Score</th>
+                                
                             </tr>
                         </thead>
                         <tbody id="viewDatasetContent">
-                            <!-- Sample data rows will be inserted here by JavaScript -->
-                            <tr>
-                                <td>2+2 equals 4</td>
-                                <td>1.0</td>
-                            </tr>
-                            <tr>
-                                <td>The square root of 9 is 3</td>
-                                <td>1.0</td>
-                            </tr>
-                            <tr>
-                                <td>5 times 6 is 30</td>
-                                <td>1.0</td>
-                            </tr>
-                            <tr>
-                                <td>10 divided by 2 is 6</td>
-                                <td>0.0</td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </div>
@@ -314,7 +209,7 @@ For unlabeled data: text" id="csvData"></textarea>
                 <p class="has-text-danger">This action cannot be undone.</p>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-danger" onclick="deleteDataset()">Delete</button>
+                <button class="button is-danger" onclick="deleteDataset()" style="margin-right:10px">Delete</button>
                 <button class="button" onclick="closeModal('deleteConfirmModal')">Cancel</button>
             </footer>
         </div>
@@ -326,101 +221,7 @@ For unlabeled data: text" id="csvData"></textarea>
             document.body.classList.toggle('is-sidebar-open');
             document.querySelector('.navbar-burger').classList.toggle('is-active');
         }
-
-        // Modal functions
-        function openNewDatasetModal() {
-            document.getElementById('newDatasetModal').classList.add('is-active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('is-active');
-        }
-
-        function viewDataset(name) {
-            document.getElementById('viewDatasetTitle').textContent = `Dataset: ${name}`;
-            document.getElementById('viewDatasetModal').classList.add('is-active');
-            
-            // In a real app, you would fetch the dataset content here
-            // and populate the table dynamically
-        }
-
-        function editDataset(name) {
-            alert(`Edit functionality for ${name} would be implemented here`);
-            // In a real app, this would open an edit modal similar to the new dataset modal
-            // but pre-populated with the existing dataset's data
-        }
-
-        function cloneDataset(name) {
-            alert(`Clone functionality for ${name} would be implemented here`);
-            // This would open the new dataset modal with all fields pre-filled
-            // but with "(Copy)" appended to the name
-        }
-
-        function confirmDelete(name) {
-            document.getElementById('datasetToDelete').textContent = name;
-            document.getElementById('deleteConfirmModal').classList.add('is-active');
-        }
-
-        function deleteDataset() {
-            const name = document.getElementById('datasetToDelete').textContent;
-            alert(`In a real app, ${name} would be deleted now`);
-            closeModal('deleteConfirmModal');
-            // Here you would also remove the dataset card from the UI
-        }
-
-        function createDataset() {
-            const name = document.getElementById('datasetName').value;
-            const type = document.getElementById('datasetType').value;
-            const csvData = document.getElementById('csvData').value;
-            const file = document.getElementById('csvFile').files[0];
-            
-            if (!name) {
-                alert('Please enter a dataset name');
-                return;
-            }
-            
-            if (!csvData && !file) {
-                alert('Please either paste CSV data or upload a file');
-                return;
-            }
-            
-            // In a real app, you would validate the CSV and create the dataset
-            alert(`Creating ${type} dataset: ${name}`);
-            closeModal('newDatasetModal');
-            
-            // Reset form
-            document.getElementById('datasetName').value = '';
-            document.getElementById('csvData').value = '';
-            document.getElementById('fileName').textContent = 'No file selected';
-            document.getElementById('csvFile').value = '';
-        }
-
-        function exportDataset() {
-            alert('Export functionality would be implemented here');
-            // This would generate and download a CSV file of the current dataset
-        }
-
-        // Handle file input display
-        document.getElementById('csvFile').addEventListener('change', function(e) {
-            const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
-            document.getElementById('fileName').textContent = fileName;
-            
-            if (e.target.files[0]) {
-                // Read the file and populate the textarea
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    document.getElementById('csvData').value = event.target.result;
-                };
-                reader.readAsText(e.target.files[0]);
-            }
-        });
-
-        // Check if there are any datasets (for empty state)
-        window.addEventListener('DOMContentLoaded', function() {
-            // In a real app, you would check if there are actually datasets
-            // For now we're always showing the sample datasets
-            // document.getElementById('emptyState').style.display = 'block';
-        });
     </script>
+    <script src="static/data.js"></script>
 </body>
 </html>
