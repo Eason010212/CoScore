@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
 </head>
+
 <body>
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
@@ -39,14 +41,14 @@
 
             <p class="menu-label">Settings</p>
             <ul class="menu-list">
-                <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
+                <li><a onclick="openLLMSettingModal()"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
             </ul>
 
-            <p class="menu-label">LINK</p>
+            <p class="menu-label">Link</p>
             <ul class="menu-list">
                 <li><a href="https://github.com/Eason010212/CoScore" target="_blank"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
             </ul>
-            
+
         </aside>
 
         <!-- 右侧页面内容 -->
@@ -65,10 +67,10 @@
                             </div>
                         </a>
                     </div>
-                    
+
                     <div class="column is-narrow step-arrow is-hidden-mobile"></div>
                     <div class="column is-narrow step-arrow is-hidden-tablet"></div>
-                    
+
                     <div class="column">
                         <a href="rules" class="step-link">
                             <div class="notification is-info step-card">
@@ -78,10 +80,10 @@
                             </div>
                         </a>
                     </div>
-                    
+
                     <div class="column is-narrow step-arrow is-hidden-mobile"></div>
                     <div class="column is-narrow step-arrow is-hidden-tablet"></div>
-                    
+
                     <div class="column">
                         <a href="tasks" class="step-link">
                             <div class="notification is-success step-card">
@@ -104,9 +106,9 @@
                             </div>
                         </a>
                     </div>
-                    
+
                     <div class="column is-half">
-                        <a href="settings" class="step-link">
+                        <a onclick="openLLMSettingModal()" class="step-link">
                             <div class="notification is-light support-card">
                                 <p class="title"><i class="fas fa-key mr-2"></i> LLM Settings</p>
                                 <p>Configure your LLM API keys and parameters</p>
@@ -126,5 +128,7 @@
             document.querySelector('.navbar-burger').classList.toggle('is-active');
         }
     </script>
+    <script src="static/settings.js"></script>
 </body>
+
 </html>

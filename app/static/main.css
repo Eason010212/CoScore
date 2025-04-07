@@ -3,20 +3,26 @@ body {
     min-height: 100vh;
     flex-direction: column;
 }
+
 .main-content {
     display: flex;
     flex: 1;
 }
+
 .sidebar {
     width: 250px;
     background: #f5f5f5;
     border-right: 1px solid #ddd;
 }
+
 .page-content {
     flex: 1;
     padding: 20px;
 }
+
+
 /* 移动端隐藏侧边栏 */
+
 @media screen and (max-width: 768px) {
     .sidebar {
         display: none;
@@ -28,18 +34,21 @@ body {
         height: 100%;
     }
 }
+
 .step-arrow {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
+
 .step-arrow::after {
     content: "→";
     font-size: 2rem;
     color: #7a7a7a;
     position: absolute;
 }
+
 @media (max-width: 768px) {
     .step-arrow::after {
         transform: rotate(90deg);
@@ -47,57 +56,73 @@ body {
         margin-bottom: 1rem;
     }
 }
+
 .step-card {
     transition: transform 0.3s ease;
     height: 100%;
 }
+
 .step-card:hover {
     transform: translateY(-5px);
 }
+
 .step-link {
     display: block;
     height: 100%;
     color: inherit;
 }
+
 .step-link:hover {
     color: inherit;
 }
+
 .support-card {
     transition: transform 0.3s ease;
     height: 100%;
 }
+
 .support-card:hover {
     transform: translateY(-5px);
 }
+
 .cards-row {
     margin-bottom: 2rem;
 }
+
 .dataset-card {
     transition: transform 0.2s;
 }
+
 .dataset-card:hover {
     transform: translateY(-3px);
 }
+
 .modal-content {
     width: 80%;
     max-width: 800px;
 }
+
 .textarea-csv {
     font-family: Monaco, Courier New, Consolas, Menlo, monospace;
     min-height: 300px;
 }
+
 .table-container {
     overflow-x: auto;
 }
+
 .tag-labeled {
     background-color: #48c774 !important;
 }
+
 .tag-unlabeled {
     background-color: #3273dc !important;
 }
+
 .content-section {
     margin-bottom: 3rem;
 }
+
 .rule-example {
     background-color: #f5f5f5;
     padding: 1.5rem;
@@ -106,14 +131,55 @@ body {
     font-family: Monaco, Courier New, Consolas, Menlo, monospace;
     white-space: pre-wrap;
 }
+
 .example-table {
     width: 100%;
     margin: 1rem 0;
 }
+
 .example-table th {
     background-color: #f0f0f0;
 }
+
 .operator-card {
     margin-bottom: 1.5rem;
     border-left: 4px solid #3273dc;
+}
+
+.rule-section {
+    margin-bottom: 2rem;
+}
+
+.code-editor {
+    font-family: Monaco, Courier New, Consolas, Menlo, monospace;
+    min-height: 128px;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    padding: 1em;
+    background-color: #f5f5f5;
+}
+
+.test-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+}
+
+.rule-card {
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.rule-card:hover {
+    transform: translateY(-3px);
+}
+
+.rule-card.is-active {
+    border-left: 4px solid #3273dc;
+}
+
+.columns {
+    align-items: flex-start;
 }

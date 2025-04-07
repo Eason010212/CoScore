@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
 </head>
+
 <body>
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
@@ -39,10 +41,10 @@
 
             <p class="menu-label">Settings</p>
             <ul class="menu-list">
-                <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
+                <li><a onclick="openLLMSettingModal()"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
             </ul>
 
-            <p class="menu-label">LINK</p>
+            <p class="menu-label">Link</p>
             <ul class="menu-list">
                 <li><a href="https://github.com/Eason010212/CoScore" target="_blank"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
             </ul>
@@ -56,13 +58,10 @@
                 <div class="content content-section">
                     <h3 class="title is-4">1. Basic Structure</h3>
                     <p>The scoring rules use structured JSON format instead of natural language descriptions, consisting of three parts: atomic rules (atoms), combination rules (combos), and combination mode (comboMode), as shown in Example 1.</p>
-                    
-                    <div class="rule-example">{
-    "atoms": {...},
-    "combos": {...},
-    "comboMode": "ADD"
-}</div>
-                    
+
+                    <div class="rule-example">{ "atoms": {...}, "combos": {...}, "comboMode": "ADD" }
+                    </div>
+
                     <p>Where:</p>
                     <ul>
                         <li><strong>Atomic rules (atoms)</strong> represent the basic scoring rules, composed of multiple atomic units</li>
@@ -73,34 +72,25 @@
                 <div class="content content-section">
                     <h3 class="title is-4">2. Atomic Rules (atoms)</h3>
                     <p>Composed of multiple atomic units as shown in Example 2. Each atomic unit holds a numeric id as the key, with the corresponding value being a JSON unit consisting of rule type (type) and rule description (desc).</p>
-                    
+
                     <div class="rule-example">
-{
-    "atoms": {
-        "0": {
-            "type": "EM",
-            "desc": "Hello"
-        },
-        "1": {...}
-    },
-    "combos": {...}
-}
+                        { "atoms": { "0": { "type": "EM", "desc": "Hello" }, "1": {...} }, "combos": {...} }
                     </div>
-                    
+
                     <p>When called, atomic rules return two values:</p>
                     <ol>
                         <li>A logical value indicating whether the rule was triggered (True/False)</li>
                         <li>A calculated value representing the numeric result when triggered</li>
                     </ol>
                     <p>Generally, when the logical value is True, the calculated value is greater than 0; when False, the calculated value is 0.</p>
-                    
+
                     <h4 class="title is-5">2.1 Exact Match Rule (EM)</h4>
                     <div class="operator-card box">
                         <p><strong>2.1.1</strong> When type is set to "EM", it indicates an exact match rule unit.</p>
                         <p><strong>2.1.2</strong> The desc must be a string, which can be either a single answer string or multiple answer strings separated by commas.</p>
                         <p><strong>2.1.3</strong> Returns [True, 1] if the student response exactly matches any of the answer strings, otherwise returns [False, 0].</p>
                     </div>
-                    
+
                     <table class="example-table table is-bordered is-striped">
                         <thead>
                             <tr>
@@ -140,10 +130,11 @@
                         <p><strong>2.2.1</strong> When type is set to "SM", it indicates a substring match rule unit.</p>
                         <p><strong>2.2.2</strong> The desc must be a string, which can be either a single answer string or multiple answer strings separated by commas.</p>
                         <p><strong>2.2.3</strong> For each answer string, if the student response contains it, count as 1 hit (value increases by 1).</p>
-                        <p><strong>2.2.4</strong> If the answer string contains "|", this indicates synonyms. Hitting any synonym counts as 1 hit total. If a synonym starts with "!", hitting it skips this answer string. If starts with "~", removes all occurrences before matching.</p>
+                        <p><strong>2.2.4</strong> If the answer string contains "|", this indicates synonyms. Hitting any synonym counts as 1 hit total. If a synonym starts with "!", hitting it skips this answer string. If starts with "~", removes all occurrences
+                            before matching.</p>
                         <p><strong>2.2.5</strong> Returns [False, 0] if no hits, otherwise [True, hit_count].</p>
                     </div>
-                    
+
                     <table class="example-table table is-bordered is-striped">
                         <thead>
                             <tr>
@@ -185,7 +176,7 @@
                         <p><strong>2.3.3</strong> Returns [True, n] if max one-way match degree n≥N, otherwise [False, 0].</p>
                         <p><strong>2.3.4</strong> One-way proximity is calculated using dynamic programming to find the longest common subsequence length divided by answer string length.</p>
                     </div>
-                    
+
                     <table class="example-table table is-bordered is-striped">
                         <thead>
                             <tr>
@@ -229,22 +220,13 @@
 
                 <div class="content content-section">
                     <h3 class="title is-4">3. Combination Rules (combos)</h3>
-                    <p>Composed of multiple combination units as shown in Example 6. Each combination unit holds a letter id as the key, with the corresponding value being a JSON unit consisting of combination expression (combo), base score (score), and scoring mode (mode).</p>
-                    
+                    <p>Composed of multiple combination units as shown in Example 6. Each combination unit holds a letter id as the key, with the corresponding value being a JSON unit consisting of combination expression (combo), base score (score), and
+                        scoring mode (mode).</p>
+
                     <div class="rule-example">
-{
-    "rules": {...},
-    "combos": {
-        "A": {
-            "combo": "G(0,T(0)) and G(1,T(0))",
-            "score": 5,
-            "mode": "logic"
-        },
-        "B": {...}
-    }
-}
+                        { "rules": {...}, "combos": { "A": { "combo": "G(0,T(0)) and G(1,T(0))", "score": 5, "mode": "logic" }, "B": {...} } }
                     </div>
-                    
+
                     <h4 class="title is-5">3.1 Combination Expression (combo)</h4>
                     <div class="operator-card box">
                         <p><strong>3.1.1 Student Response Operators</strong> For the nth blank in student response (0-indexed):</p>
@@ -256,7 +238,7 @@
                             <li>When n is "*", operates on all blanks combined</li>
                         </ul>
                     </div>
-                    
+
                     <div class="operator-card box">
                         <p><strong>3.1.2 Atomic Rule Operators</strong>:</p>
                         <ul>
@@ -264,7 +246,7 @@
                             <li><strong>M(K,s)</strong>: Calls atomic rule K on response s, returns calculated value</li>
                         </ul>
                     </div>
-                    
+
                     <div class="operator-card box">
                         <p><strong>3.1.3 Additional Logic Operators</strong>:</p>
                         <ul>
@@ -273,12 +255,13 @@
                             <li><strong>X(a,b,...)</strong>: Returns maximum value</li>
                         </ul>
                     </div>
-                    
+
                     <div class="operator-card box">
-                        <p><strong>3.1.4 Valid Symbols</strong>: if else and or not () == >= != <= < > True False + - * / numbers</p>
+                        <p><strong>3.1.4 Valid Symbols</strong>: if else and or not () == >= !=
+                            <=<> True False + - * / numbers</p>
                         <p>if else can only be used in single-line A if B else C form.</p>
                     </div>
-                    
+
                     <h4 class="title is-5">3.2 Base Score (score) and Scoring Mode (mode)</h4>
                     <div class="operator-card box">
                         <p><strong>3.2.1</strong> score must be a number representing the base score when rule triggers.</p>
@@ -302,5 +285,7 @@
             document.querySelector('.navbar-burger').classList.toggle('is-active');
         }
     </script>
+    <script src="static/settings.js"></script>
 </body>
+
 </html>

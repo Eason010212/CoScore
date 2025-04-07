@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,10 @@
     <link rel="stylesheet" href="static/bulma.min.css">
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
+    <script src="static/jquery.min.js"></script>
+
 </head>
+
 <body>
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
@@ -39,10 +43,10 @@
 
             <p class="menu-label">Settings</p>
             <ul class="menu-list">
-                <li><a href="settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
+                <li><a onclick="openLLMSettingModal()"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
             </ul>
 
-            <p class="menu-label">LINK</p>
+            <p class="menu-label">Link</p>
             <ul class="menu-list">
                 <li><a href="https://github.com/Eason010212/CoScore" target="_blank"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
             </ul>
@@ -54,11 +58,89 @@
                 <h1 class="title">Rules</h1>
                 <h2 class="subtitle">Create scoring rules with the help of LLM</h2>
 
-                
+                <div class="columns">
+                    <!-- 规则生成区 -->
+                    <div class="column is-two-thirds">
+                        <div class="box rule-section">
+                            <div class="field">
+                                <label class="label">Prompt for Rule Generation</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="rulePrompt" placeholder="Describe the scoring criteria you want to generate..."></textarea>
+                                </div>
+                                <p class="help">Example: "Create a rule that scores answers about the solar system based on accuracy and completeness"</p>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-primary" id="generateBtn" onclick="generateRule()">
+                                        <span class="icon"><i class="fas fa-magic"></i></span>
+                                        <span>Generate Rule</span>
+                                    </button>
+                                    <button class="button is-info is-outlined" id="saveBtn" onclick="saveRule()">
+                                        <span class="icon"><i class="fas fa-save"></i></span>
+                                        <span>Save Rule</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Generated Rule (JSON)</label>
+                                <div class="control">
+                                    <div class="code-editor" id="generatedRule" contenteditable="true">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Test Rule</label>
+                                <div class="control">
+                                    <textarea class="textarea" id="testText" placeholder="Enter text to test the rule..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <button class="button is-info" id="testBtn" onclick="testRule()">
+                                        <span class="icon"><i class="fas fa-play"></i></span>
+                                        <span>Test Rule</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div id="testResult" class="test-result" style="display: none;">
+                                <h4 class="title is-6">Test Result</h4>
+                                <div id="resultContent"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 历史规则 -->
+                    <div class="column is-one-third">
+                        <div class="box">
+                            <div class="level">
+                                <div class="level-left">
+                                    <h3 class="title is-5">Saved Rules</h3>
+                                </div>
+                            </div>
+
+                            <div id="rulesList">
+
+                            </div>
+
+                            <div id="emptyRules" class="has-text-centered py-6" style="display: none;">
+                                <span class="icon is-large has-text-grey-light">
+                                    <i class="fas fa-code fa-3x"></i>
+                                </span>
+                                <p class="subtitle">No saved rules yet</p>
+                                <p>Generate your first rule to get started</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
-
 
     <script>
         // 移动端切换侧边栏
@@ -67,5 +149,8 @@
             document.querySelector('.navbar-burger').classList.toggle('is-active');
         }
     </script>
+    <script src="static/rules.js"></script>
+    <script src="static/settings.js"></script>
 </body>
+
 </html>

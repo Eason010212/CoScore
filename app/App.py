@@ -92,4 +92,21 @@ def deleteData():
 
     return jsonify({'message': 'Dataset deleted successfully'})
 
+@app.route('/api/getRules', methods=['GET'])
+def getRule():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.execute('SELECT * FROM rules')
+    data = []
+    for row in cursor:
+        data.append({
+            'name': row[0],
+            'prompt': row[1],
+            'desc': row[2],
+            'rule': row[3],
+            'created': row[4],
+            'modified': row[5]
+        })
+    conn.close()
+    return jsonify(data)
+
 app.run(debug=True, port=5000)

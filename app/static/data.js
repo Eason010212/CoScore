@@ -7,6 +7,7 @@ function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('is-active');
 }
 
+
 function viewDataset(name) {
     document.getElementById('viewDatasetTitle').textContent = `Dataset: ${name}`;
     document.getElementById('viewDatasetModal').classList.add('is-active');
@@ -15,20 +16,17 @@ function viewDataset(name) {
     // clear #viewDatasetContent
     document.getElementById('viewDatasetContent').innerHTML = '';
     var data = allDataDetail[name].data
-    // update header
+        // update header
     var dataLines = data.split('\n');
     var dataHeaders = dataLines[0].split(',');
-    for(var i = 0; i < dataHeaders.length; i = i+1)
-    {
+    for (var i = 0; i < dataHeaders.length; i = i + 1) {
         $('#viewDatasetHeaders').append(`<th>${dataHeaders[i]}</th>`);
     }
     // update content
-    for(var i = 1; i < dataLines.length; i = i+1)
-    {
+    for (var i = 1; i < dataLines.length; i = i + 1) {
         var dataLine = dataLines[i].split(',');
         $('#viewDatasetContent').append(`<tr>`);
-        for(var j = 0; j < dataLine.length; j = j+1)
-        {
+        for (var j = 0; j < dataLine.length; j = j + 1) {
             $('#viewDatasetContent').append(`<td>${dataLine[j]}</td>`);
         }
         $('#viewDatasetContent').append(`</tr>`);
@@ -64,16 +62,14 @@ function createDataset() {
     const desc = document.getElementById('datasetDesc').value;
     const type = document.getElementById('datasetType').value;
     const csvData = document.getElementById('csvData').value;
-    
+
     if (!name) {
         alert('Please enter a dataset name');
         return;
     }
 
-    for(var i = 0; i < allData.length; i = i+1)
-    {
-        if(name == allData[i])
-        {
+    for (var i = 0; i < allData.length; i = i + 1) {
+        if (name == allData[i]) {
             alert('Dataset name already exists');
             return;
         }
@@ -83,71 +79,59 @@ function createDataset() {
         alert('Please enter a dataset description');
         return;
     }
-    
+
     if (!csvData) {
         alert('Please either paste CSV data or upload a file');
         return;
     }
     var length = 0
-    if(type == "labeled")
-    {
+    if (type == "labeled") {
         // 检验csvData是否符合格式, 有且仅有text和score两列
         const lines = csvData.split('\n');
         length = lines.length - 1
-        if(lines.length < 2)
-        {
+        if (lines.length < 2) {
             alert('Please enter at least two lines of data');
             return;
         }
         const headers = lines[0].split(',');
-        if(headers.length != 2)
-        {
+        if (headers.length != 2) {
             alert('Please enter two columns of data (text and score)');
             return;
         }
-        if(headers[0] != 'text' || headers[1] != 'score')
-        {
+        if (headers[0] != 'text' || headers[1] != 'score') {
             alert('Please enter two columns of data (text and score)');
             return;
         }
-        for(let i = 1; i < lines.length; i++)
-        {
+        for (let i = 1; i < lines.length; i++) {
             const line = lines[i].split(',');
-            if(line.length != 2)
-            {
+            if (line.length != 2) {
                 alert('Please enter two columns of data (text and score)');
                 return;
             }
-            if(isNaN(line[1]))
-            {
+            if (isNaN(line[1])) {
                 alert('Please enter a number for the score');
                 return;
             }
         }
-    }
-    else if(type == "unlabeled")
-    {
+    } else if (type == "unlabeled") {
         // 检验csvData是否符合格式, 有且仅有text列
         const lines = csvData.split('\n');
         length = lines.length - 1
-        if(lines.length < 2)
-        {
+        if (lines.length < 2) {
             alert('Please enter at least two lines of data');
             return;
         }
         const headers = lines[0].split(',');
-        if(headers.length != 1)
-        {
+        if (headers.length != 1) {
             alert('Please enter one column of data (text)');
             return;
         }
-        if(headers[0] != 'text')
-        {
+        if (headers[0] != 'text') {
             alert('Please enter one column of data (text)');
             return;
         }
     }
-    
+
     $.ajax({
         url: '/api/createData',
         type: 'POST',
@@ -187,7 +171,7 @@ function exportDataset() {
 document.getElementById('csvFile').addEventListener('change', function(e) {
     const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
     document.getElementById('fileName').textContent = fileName;
-    
+
     if (e.target.files[0]) {
         // Read the file and populate the textarea
         const reader = new FileReader();
@@ -199,7 +183,7 @@ document.getElementById('csvFile').addEventListener('change', function(e) {
 });
 allData = []
 allDataDetail = {}
-// Check if there are any datasets (for empty state)
+    // Check if there are any datasets (for empty state)
 window.addEventListener('DOMContentLoaded', function() {
     $.ajax({
         url: '/api/getData',
