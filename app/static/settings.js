@@ -2,7 +2,7 @@
 function getLLMSettings() {
     const apiReferer = localStorage.getItem('apiReferer') || 'siliconflow';
     const apiKey = localStorage.getItem('apiKey') || '';
-    const apiModel = localStorage.getItem('apiModel') || 'deepseek-v3';
+    const apiModel = localStorage.getItem('apiModel') || 'Pro/deepseek-ai/DeepSeek-V3';
     document.getElementById('apiReferer').value = apiReferer;
     document.getElementById('apiKey').value = apiKey;
     document.getElementById('apiModel').value = apiModel;
@@ -52,8 +52,8 @@ const inject = `<div class="modal" id="LLMSettingModal">
                     <div class="control">
                         <div class="select is-fullwidth">
                             <select id="apiModel">
-                                <option value="deepseek-v3">Pro/deepseek-ai/DeepSeek-V3</option>
-                                <option value="qwen-v2.5">Qwen/Qwen2.5-72B-Instruct</option>
+                                <option value="Pro/deepseek-ai/DeepSeek-V3">Pro/deepseek-ai/DeepSeek-V3</option>
+                                <option value="Qwen/Qwen2.5-72B-Instruct">Qwen/Qwen2.5-72B-Instruct</option>
                             </select>
                         </div>
                     </div>

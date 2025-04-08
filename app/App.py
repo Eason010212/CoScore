@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask import render_template
 import sqlite3
 import datetime
+from Rule import Rule
+import json
 
 # Create a Flask application instance
 app = Flask(__name__)
@@ -108,5 +110,16 @@ def getRule():
         })
     conn.close()
     return jsonify(data)
+
+@app.route('/api/testRule', methods=['POST'])
+def testTask():
+    data = request.get_json()
+    rule = data['rule']
+    answer = data['answer']
+    rule = Rule(rule)
+    score, debugInfo = rule.calculate(answer)
+    # delete calMemory in debugInfo
+    del debugInfo['calMemory']
+    return jsonify({'score': score, 'debugInfo': debugInfo})
 
 app.run(debug=True, port=5000)

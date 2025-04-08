@@ -9,9 +9,18 @@ function generateRule() {
     // Show loading state
     const btn = document.getElementById('generateBtn');
     btn.classList.add('is-loading');
+    chat(prompt, (response) => {
+        btn.classList.remove('is-loading');
+        if (response.ok) {
+            response.json().then(data => {
+                const rule = data.choices[0].message.content;
+                document.getElementById('generatedRule').textContent = rule;
+            });
+        } else {
+            alert('Error generating rule');
+        }
+    });
 
-    // In a real app, this would call your LLM API
-    // Here we simulate a delay and return a sample rule
 }
 
 // Save the current rule
@@ -32,13 +41,16 @@ function saveRule() {
 
 // Test the current rule
 function testRule() {
-    const ruleContent = document.getElementById('generatedRule').textContent;
+    var ruleContent = document.getElementById('generatedRule').textContent;
     const testText = document.getElementById('testText').value;
 
     if (!ruleContent) {
         alert('No rule to test');
         return;
     }
+    //ruleContent remove '```json' and '```'
+    var rule = ruleContent.replace('```json', '').replace('```', '').trim();
+    var ruleContent = JSON.parse(rule);
 
     if (!testText) {
         alert('Please enter text to test');
@@ -49,23 +61,23 @@ function testRule() {
     const btn = document.getElementById('testBtn');
     btn.classList.add('is-loading');
 
-    // In a real app, this would call your scoring engine
-    // Here we simulate a delay and return a sample result
-    setTimeout(() => {
-        const score = Math.min(10, Math.max(0, Math.floor(Math.random() * 10 * 10) / 10));
-        document.getElementById('resultContent').innerHTML = `
-                    <p><strong>Input Text:</strong> "${testText.substring(0, 50)}${testText.length > 50 ? '...' : ''}"</p>
-                    <p><strong>Score:</strong> <span class="tag is-primary is-medium">${score}</span></p>
-                    <p><strong>Details:</strong></p>
-                    <ul>
-                        <li>Rule component 1 matched: ${score > 5 ? 'Yes' : 'No'}</li>
-                        <li>Rule component 2 matched: ${score > 3 ? 'Yes' : 'No'}</li>
-                        <li>Score calculation: ${score > 5 ? 'Full' : 'Partial'} credit</li>
-                    </ul>
-                `;
-        document.getElementById('testResult').style.display = 'block';
-        btn.classList.remove('is-loading');
-    }, 1000);
+    $.ajax({
+        url: '/api/testRule',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            rule: ruleContent,
+            answer: testText.split('-')
+        }),
+        success: function(response) {
+            btn.classList.remove('is-loading');
+            $("#testResult").html(`Rule test result: ${JSON.stringify(response)}`);
+        },
+        error: function(error) {
+            btn.classList.remove('is-loading');
+            $("#testResult").html('Error testing rule');
+        }
+    });
 }
 
 // Load a saved rule
@@ -154,4 +166,5 @@ window.addEventListener('DOMContentLoaded', function() {
             alert('An error occurred: ' + error);
         }
     });
+    $("#rulePrompt").val("流程通顺（5分）：[前进、红灯、停车/等待、左转、前进] 单向贴近得分；逻辑正确（3分）：如果/是否/若/反之；程序完整（2分）：开始,结束")
 });

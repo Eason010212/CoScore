@@ -65,9 +65,8 @@
                             <div class="field">
                                 <label class="label">Prompt for Rule Generation</label>
                                 <div class="control">
-                                    <textarea class="textarea" id="rulePrompt" placeholder="Describe the scoring criteria you want to generate..."></textarea>
+                                    <textarea class="textarea" style="min-height: 100px;" id="rulePrompt" placeholder="Describe the scoring criteria you want to generate..."></textarea>
                                 </div>
-                                <p class="help">Example: "Create a rule that scores answers about the solar system based on accuracy and completeness"</p>
                             </div>
 
                             <div class="field">
@@ -86,7 +85,7 @@
                             <div class="field">
                                 <label class="label">Generated Rule (JSON)</label>
                                 <div class="control">
-                                    <div class="code-editor" id="generatedRule" contenteditable="true">
+                                    <div class="code-editor" id="generatedRule" contenteditable="true" style="min-height: 100px;">
 
                                     </div>
                                 </div>
@@ -95,8 +94,9 @@
                             <div class="field">
                                 <label class="label">Test Rule</label>
                                 <div class="control">
-                                    <textarea class="textarea" id="testText" placeholder="Enter text to test the rule..."></textarea>
+                                    <textarea class="textarea" id="testText" style="min-height: 100px;" placeholder="Enter text to test the rule..."></textarea>
                                 </div>
+
                             </div>
 
                             <div class="field">
@@ -105,6 +105,12 @@
                                         <span class="icon"><i class="fas fa-play"></i></span>
                                         <span>Test Rule</span>
                                     </button>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="code-editor" id="testResult" style="min-height: 50px;">
+                                    ...
                                 </div>
                             </div>
 
@@ -151,6 +157,7 @@
     </script>
     <script src="static/rules.js"></script>
     <script src="static/settings.js"></script>
+    <script src="static/llm.js"></script>
 </body>
 
 </html>
