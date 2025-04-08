@@ -1,23 +1,33 @@
-// Generate a new rule 
+// Generate a new rule
+currentRuleId = ''
+
 function generateRule() {
     const prompt = document.getElementById('rulePrompt').value;
     if (!prompt) {
-        alert('Please enter a prompt for rule generation');
+        showNotification('Error', 'Please enter a prompt for rule generation');
         return;
     }
 
     // Show loading state
     const btn = document.getElementById('generateBtn');
     btn.classList.add('is-loading');
+    let accumulatedContent = '';
+
     chat(prompt, (response) => {
-        btn.classList.remove('is-loading');
-        if (response.ok) {
-            response.json().then(data => {
-                const rule = data.choices[0].message.content;
-                document.getElementById('generatedRule').textContent = rule;
-            });
-        } else {
-            alert('Error generating rule');
+        if (response.error) {
+            btn.classList.remove('is-loading');
+            showNotification('Error', 'Error: ' + response.error);
+            return;
+        }
+
+        if (response.done) {
+            btn.classList.remove('is-loading');
+            return;
+        }
+
+        if (response.content) {
+            accumulatedContent += response.content;
+            document.getElementById('generatedRule').textContent = accumulatedContent;
         }
     });
 
@@ -26,16 +36,52 @@ function generateRule() {
 // Save the current rule
 function saveRule() {
     const ruleContent = document.getElementById('generatedRule').textContent;
+    const thisprompt = document.getElementById('rulePrompt').value;
     if (!ruleContent) {
-        alert('No rule to save');
+        showNotification('Error', 'No rule to save');
         return;
     }
-
-    // In a real app, this would save to your backend
-    // Here we just show a confirmation
-    const ruleName = prompt('Enter a name for this rule:', 'New Scoring Rule');
+    var ruleName = ""
+    var isNew = false
+    if (currentRuleId == "") {
+        ruleName = prompt('Enter a name for this rule:', 'New Scoring Rule');
+        isNew = true
+    } else {
+        ruleName = currentRuleId
+    }
     if (ruleName) {
-        alert(`Rule "${ruleName}" would be saved in a real implementation`);
+        var dup = false
+        for (var i = 0; i < allRules.length; i++) {
+            if (allRules[i] == ruleName) {
+                dup = true
+                break
+            }
+        }
+        if (dup && isNew) {
+            showNotification('Error', 'Rule name already exists');
+            return;
+        }
+        $.ajax({
+            url: '/api/saveRule',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                name: ruleName,
+                prompt: thisprompt,
+                rule: ruleContent
+            }),
+            success: function(response) {
+                showNotification('Success', 'Rule saved successfully');
+                allRules.push(ruleName)
+                allRulesDict[ruleName] = ruleContent
+                location.reload()
+            },
+            error: function(error) {
+                showNotification('Error', 'Error saving rule');
+            }
+        });
+    } else {
+        showNotification('Error', 'Rule saving cancelled');
     }
 }
 
@@ -45,7 +91,7 @@ function testRule() {
     const testText = document.getElementById('testText').value;
 
     if (!ruleContent) {
-        alert('No rule to test');
+        showNotification('Error', 'No rule to test');
         return;
     }
     //ruleContent remove '```json' and '```'
@@ -53,7 +99,7 @@ function testRule() {
     var ruleContent = JSON.parse(rule);
 
     if (!testText) {
-        alert('Please enter text to test');
+        showNotification('Error', 'Please enter text to test');
         return;
     }
 
@@ -82,8 +128,6 @@ function testRule() {
 
 // Load a saved rule
 function loadRule(ruleId) {
-    if (!sampleRules[ruleId]) return;
-
     // Update UI
     document.querySelectorAll('.rule-card').forEach(card => {
         card.classList.remove('is-active');
@@ -92,44 +136,49 @@ function loadRule(ruleId) {
 
     // Load the rule
     currentRuleId = ruleId;
-    const rule = sampleRules[ruleId];
+    const rule = allRulesDict[ruleId];
     document.getElementById('generatedRule').textContent = rule.rule;
+    document.getElementById('rulePrompt').value = rule.prompt;
+    document.getElementById('testText').value = '';
+    document.getElementById('testResult').textContent = '...';
 }
 
 // Delete a rule
 function deleteRule(ruleId) {
-    if (confirm(`Are you sure you want to delete "${sampleRules[ruleId].name}"?`)) {
-        // In a real app, this would delete from your backend
-        // Here we just show a confirmation
-        alert(`Rule "${sampleRules[ruleId].name}" would be deleted in a real implementation`);
-        event.stopPropagation();
+    if (confirm(`Are you sure you want to delete "${ruleId}"?`)) {
+        $.ajax({
+            url: '/api/deleteRule',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                name: ruleId
+            }),
+            success: function(response) {
+                showNotification('Success', 'Rule deleted successfully');
+                location.reload()
+            },
+            error: function(error) {
+                showNotification('Error', 'Error deleting rule');
+            }
+        });
     }
 }
 
-// Refresh rules list
-function refreshRules() {
-    // In a real app, this would reload from your backend
-    alert('Rules list would be refreshed in a real implementation');
+function newRule() {
+    // 清空rulePrompt和generatedRule
+    document.getElementById('rulePrompt').value = '';
+    document.getElementById('generatedRule').textContent = '';
+    document.getElementById('testText').value = '';
+    document.getElementById('testResult').textContent = '...';
+    currentRuleId = '';
+    // request focus: rulePrompt
+    document.getElementById('rulePrompt').focus();
 }
 
-// Initialize with first rule loaded
+allRules = []
+allRulesDict = {}
+    // Initialize with first rule loaded
 window.addEventListener('DOMContentLoaded', function() {
-    /*<div class="card rule-card is-active" onclick="loadRule('solarSystem')">
-                                    <div class="card-content">
-                                        <div class="media">
-                                            <div class="media-content">
-                                                <p class="title is-6">Solar System Accuracy</p>
-                                                <p class="subtitle is-7">Last used: 2023-06-15</p>
-                                            </div>
-                                            <div class="media-right">
-                                                <button class="delete is-small" onclick="event.stopPropagation();deleteRule('solarSystem')"></button>
-                                            </div>
-                                        </div>
-                                        <div class="content">
-                                            <small>Scores answers about planets and orbits</small>
-                                        </div>
-                                    </div>
-                                </div>*/
     $.ajax({
         url: '/api/getRules',
         type: 'GET',
@@ -140,13 +189,15 @@ window.addEventListener('DOMContentLoaded', function() {
             } else {
                 $("#emptyRules").css("display", "none")
                 response.forEach(function(rule) {
+                    allRules.push(rule.name)
+                    allRulesDict[rule.name] = rule
                     const ruleCard = `
                         <div class="card rule-card" onclick="loadRule('${rule.name}')">
                             <div class="card-content">
                                 <div class="media">
                                     <div class="media-content">
                                         <p class="title is-6">${rule.name}</p>
-                                        <p class="subtitle is-7">Last used: ${rule.modified}</p>
+                                        <p class="subtitle is-7">Last modified: ${rule.modified}</p>
                                     </div>
                                     <div class="media-right">
                                         <button class="delete is-small" onclick="event.stopPropagation();deleteRule('${rule.name}')"></button>
@@ -158,13 +209,12 @@ window.addEventListener('DOMContentLoaded', function() {
                             </div>
                         </div>
                     `;
-                    document.getElementById('ruleCards').innerHTML += ruleCard;
+                    document.getElementById('rulesList').innerHTML += ruleCard;
                 });
             }
         },
         error: function(xhr, status, error) {
-            alert('An error occurred: ' + error);
+            showNotification('Error', 'An error occurred: ' + error);
         }
     });
-    $("#rulePrompt").val("流程通顺（5分）：[前进、红灯、停车/等待、左转、前进] 单向贴近得分；逻辑正确（3分）：如果/是否/若/反之；程序完整（2分）：开始,结束")
 });

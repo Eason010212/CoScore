@@ -122,4 +122,34 @@ def testTask():
     del debugInfo['calMemory']
     return jsonify({'score': score, 'debugInfo': debugInfo})
 
+@app.route('/api/saveRule', methods=['POST'])
+def saveRule():
+    data = request.get_json()
+    uname = data['name']
+    prompt = data['prompt']
+    desc = prompt[0:20] + '...' if len(prompt) > 20 else prompt
+    rule = data['rule']
+    # if already have this rule name, modify it with prompt, desc, rule, and modify_time
+    conn = sqlite3.connect('database.db')
+    cursor = conn.execute('SELECT * FROM rules WHERE name = ?', (uname, ))
+    if cursor.fetchone() is not None:
+        conn.execute('UPDATE rules SET prompt = ?, description = ?, rule = ?, modify_time = ? WHERE name = ?', (prompt, desc, rule, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), uname))
+    else:
+        conn.execute('INSERT INTO rules (name, prompt, description, rule, create_time, modify_time) VALUES (?, ?, ?, ?, ?, ?)', (uname, prompt, desc, rule, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+    conn.commit()
+    conn.close()
+    return jsonify({'message': 'Rule saved successfully'})
+
+@app.route('/api/deleteRule', methods=['POST'])
+def deleteRule():
+    data = request.get_json()
+    name = data['name']
+
+    conn = sqlite3.connect('database.db')
+    conn.execute('DELETE FROM rules WHERE name = ?', (name, ))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Rule deleted successfully'})
+
 app.run(debug=True, port=5000)

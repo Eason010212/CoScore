@@ -73,6 +73,25 @@ const inject = `<div class="modal" id="LLMSettingModal">
 // inject the modal
 document.body.innerHTML += inject
 
+const inject2 = `<!-- Notification Modal -->
+    <div class="modal" id="notificationModal">
+        <div class="modal-background" onclick="closeModal('notificationModal')"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title" id="notificationTitle">Notification</p>
+                <button class="delete" aria-label="close" onclick="closeModal('notificationModal')"></button>
+            </header>
+            <section class="modal-card-body">
+                <p id="notificationMessage">This is a notification message.</p>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button" onclick="closeModal('notificationModal')">OK</button>
+            </footer>
+        </div>
+    </div>`
+    // inject the modal
+document.body.innerHTML += inject2
+
 function openLLMSettingModal() {
     document.getElementById('LLMSettingModal').classList.add('is-active');
     getLLMSettings();
@@ -80,4 +99,10 @@ function openLLMSettingModal() {
 
 function closeModal(modalId) {
     document.getElementById(modalId).classList.remove('is-active');
+}
+
+function showNotification(title, message) {
+    document.getElementById('notificationTitle').textContent = title;
+    document.getElementById('notificationMessage').textContent = message;
+    document.getElementById('notificationModal').classList.add('is-active');
 }

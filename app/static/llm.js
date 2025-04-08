@@ -112,20 +112,62 @@ X算子 X(a,b,...)表示对任意个数的变量输入，返回最大的值。
 2.3 组合模式
 组合模式必须为“ADD”或“MAX”。当模式为“ADD”时，题目的最终得分为组合规则中各评分规则单元计分结果的总和；当模式为“MAX”时，题目的最终得分为组合规则中各评分规则单元计分结果的最大值。特别地，小于0分的总分会被置为0分，大于10分的总分会被置为10分。
 `
-prompt = manual + '基于以上规则编制规范，直接输出$REQ$对应的JSON规则，不要输出其它内容'
+myPrompt = manual + '基于以上规则编制规范，直接输出$REQ$对应的JSON规则，不要输出其它内容'
 
 function chat(req, cb) {
-    console.log(req)
+    console.log(req);
     const options = {
         method: 'POST',
-        headers: { Authorization: 'Bearer ' + localStorage.getItem('apiKey'), 'Content-Type': 'application/json' },
+        headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('apiKey'),
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify({
             model: localStorage.getItem('apiModel'),
-            messages: [{ role: 'user', content: prompt.replace('$REQ$', req) }],
-            stream: false
+            messages: [{ role: 'user', content: myPrompt.replace('$REQ$', req) }],
+            stream: true
         })
     };
+
     fetch('https://api.siliconflow.cn/v1/chat/completions', options)
-        .then(response => cb(response))
-        .catch(err => cb(err));
+        .then(async response => {
+            if (!response.ok) {
+                cb({ error: `HTTP error! status: ${response.status}` });
+                return;
+            }
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            let result = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    cb({ done: true });
+                    break;
+                }
+
+                const chunk = decoder.decode(value);
+                try {
+                    const lines = chunk.split('\n').filter(line => line.trim() !== '');
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.substring(6);
+                            if (data === '[DONE]') {
+                                cb({ done: true });
+                                return;
+                            }
+                            const parsed = JSON.parse(data);
+                            if (parsed.choices && parsed.choices[0].delta && parsed.choices[0].delta.content) {
+                                result += parsed.choices[0].delta.content;
+                                cb({ content: parsed.choices[0].delta.content, partial: result });
+                            }
+                        }
+                    }
+                } catch (err) {
+                    cb({ error: err.message });
+                }
+            }
+        })
+        .catch(err => cb({ error: err.message }));
 }
