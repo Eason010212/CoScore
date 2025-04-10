@@ -4,6 +4,8 @@ import sqlite3
 import datetime
 from Rule import Rule
 import json
+# multi-threading
+import threading
 
 # Create a Flask application instance
 app = Flask(__name__)
@@ -128,7 +130,7 @@ def saveRule():
     uname = data['name']
     prompt = data['prompt']
     desc = prompt[0:20] + '...' if len(prompt) > 20 else prompt
-    rule = data['rule']
+    rule = data['rule'].replace('```json', '').replace('```', '').strip()
     # if already have this rule name, modify it with prompt, desc, rule, and modify_time
     conn = sqlite3.connect('database.db')
     cursor = conn.execute('SELECT * FROM rules WHERE name = ?', (uname, ))
@@ -151,5 +153,115 @@ def deleteRule():
     conn.close()
 
     return jsonify({'message': 'Rule deleted successfully'})
+
+@app.route('/api/getTasks', methods=['GET'])
+def getTasks():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.execute('SELECT * FROM tasks')
+    data = []
+    for row in cursor:
+        data.append({
+            'data_name': row[0],
+            'rule_name': row[1],
+            'task_name': row[2],
+            'status': row[3],
+            'created': row[4],
+            'executed': row[5],
+            'result': row[6]
+        })
+    conn.close()
+    return jsonify(data)
+
+@app.route('/api/createTask', methods=['POST'])
+def createTask():
+    data = request.get_json()
+    data_name = data['data_name']
+    rule_name = data['rule_name']
+    task_name = data['task_name']
+    status = 'running'
+    create_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    executed_time = ''
+    result = ''
+
+    conn = sqlite3.connect('database.db')
+    conn.execute('INSERT INTO tasks (data_name, rule_name, task_name, status, create_time, executed_time, result) VALUES (?, ?, ?, ?, ?, ?, ?)', (data_name, rule_name, task_name, status, create_time, executed_time, result))
+    conn.commit()
+    conn.close()
+    # run the task in a new thread
+    thread = threading.Thread(target=runTask, args=(data_name, rule_name, task_name))
+    thread.start()
+    return jsonify({'message': 'Task created successfully'})
+
+def runTask(data_name, rule_name, task_name):
+    try:
+        print('Running task: ' + task_name)
+        conn = sqlite3.connect('database.db')
+        cursor = conn.execute('SELECT * FROM data WHERE name = ?', (data_name, ))
+        data = cursor.fetchone()
+        if data is None:
+            return 'Data not found'
+        data = {
+            'name': data[0],
+            'desc': data[1],
+            'type': data[2],
+            'data': data[3].split('\n'),
+            'count': data[4],
+            'created': data[5]
+        }
+        cursor = conn.execute('SELECT * FROM rules WHERE name = ?', (rule_name, ))
+        rule = cursor.fetchone()
+        print(rule[3])
+        rule = {
+            'name': rule[0],
+            'prompt': rule[1],
+            'desc': rule[2],
+            'rule': json.loads(rule[3]),
+            'created': rule[4],
+            'modified': rule[5]
+        }
+
+        # run the task
+        ruleObj = Rule(rule['rule'])
+        allData = []
+        for i in range(1, int(data['count'])):
+            allData.append(ruleObj.calculate(data['data'][i].split(',')[0].split('-')))
+        allScore = []
+        allLog = []
+        for i in range(len(allData)):
+            score, debugInfo = ruleObj.calculate(allData[i])
+            del debugInfo['calMemory']
+            allScore.append(score)
+            allLog.append(debugInfo)
+        # update the task status
+        myResult = {
+            'scores': allScore,
+            'logs': allLog
+        }
+        conn.execute('UPDATE tasks SET status = ?, executed_time = ?, result = ? WHERE data_name = ? AND rule_name = ? AND task_name = ?', ('completed', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), json.dumps(myResult), data_name, rule_name, task_name))
+        conn.commit()
+        conn.close()
+        print('Task finished: ' + task_name)
+        return 'Task finished'
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        conn.execute('UPDATE tasks SET status = ?, executed_time = ?, result = ? WHERE data_name = ? AND rule_name = ? AND task_name = ?', ('failed', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), str(e), data_name, rule_name, task_name))
+        conn.commit()
+        conn.close()
+        print('Task failed: ' + task_name)
+        return 'Task failed'
+
+# if have 'running' tasks, run them
+def runAllTasks():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.execute('SELECT * FROM tasks WHERE status = ?', ('running', ))
+    for row in cursor:
+        data_name = row[0]
+        rule_name = row[1]
+        task_name = row[2]
+        thread = threading.Thread(target=runTask, args=(data_name, rule_name, task_name))
+        thread.start()
+    conn.close()
+runAllTasks()
 
 app.run(debug=True, port=5000)

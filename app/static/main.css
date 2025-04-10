@@ -183,3 +183,38 @@ body {
 .columns {
     align-items: flex-start;
 }
+
+.task-table {
+    width: 100%;
+}
+
+.status-tag {
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-running {
+    background-color: #3273dc !important;
+}
+
+.status-completed {
+    background-color: #48c774 !important;
+}
+
+.status-failed {
+    background-color: #f14668 !important;
+}
+
+.status-pending {
+    background-color: #ffdd57 !important;
+    color: rgba(0, 0, 0, 0.7) !important;
+}
+
+.action-buttons {
+    white-space: nowrap;
+}
+
+.modal-card {
+    width: 90%;
+    max-width: 800px;
+}

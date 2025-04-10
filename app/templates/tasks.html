@@ -8,42 +8,7 @@
     <link rel="stylesheet" href="static/bulma.min.css">
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
-    <style>
-        .task-table {
-            width: 100%;
-        }
-        
-        .status-tag {
-            min-width: 80px;
-            text-align: center;
-        }
-        
-        .status-running {
-            background-color: #3273dc !important;
-        }
-        
-        .status-completed {
-            background-color: #48c774 !important;
-        }
-        
-        .status-failed {
-            background-color: #f14668 !important;
-        }
-        
-        .status-pending {
-            background-color: #ffdd57 !important;
-            color: rgba(0, 0, 0, 0.7) !important;
-        }
-        
-        .action-buttons {
-            white-space: nowrap;
-        }
-        
-        .modal-card {
-            width: 90%;
-            max-width: 800px;
-        }
-    </style>
+    <script src="static/jquery.min.js"></script>
 </head>
 
 <body>
@@ -105,7 +70,7 @@
                 </div>
 
                 <!-- Tasks Table -->
-                <div class="box">
+                <div class="box" id="myTaskTable">
                     <div class="table-container">
                         <table class="table is-fullwidth is-striped is-hoverable task-table">
                             <thead>
@@ -118,86 +83,8 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Sample Task 1 -->
-                                <tr>
-                                    <td>Math Answers Scoring</td>
-                                    <td>Math Problem Answers</td>
-                                    <td>Math Accuracy Rule</td>
-                                    <td>
-                                        <span class="tag status-tag status-completed">Completed</span>
-                                    </td>
-                                    <td>2023-06-15 14:30</td>
-                                    <td class="action-buttons">
-                                        <button class="button is-small is-info" onclick="viewResults('task1')">
-                                            <span class="icon"><i class="fas fa-eye"></i></span>
-                                            <span>Results</span>
-                                        </button>
-                                        <button class="button is-small is-danger" onclick="deleteTask('task1')">
-                                            <span class="icon"><i class="fas fa-trash"></i></span>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Sample Task 2 -->
-                                <tr>
-                                    <td>History Essay Evaluation</td>
-                                    <td>WWII Essays</td>
-                                    <td>History Analysis Rule</td>
-                                    <td>
-                                        <span class="tag status-tag status-running">Running</span>
-                                    </td>
-                                    <td>2023-06-16 09:15</td>
-                                    <td class="action-buttons">
-                                        <button class="button is-small is-info" disabled>
-                                            <span class="icon"><i class="fas fa-eye"></i></span>
-                                            <span>Results</span>
-                                        </button>
-                                        <button class="button is-small is-danger" onclick="stopTask('task2')">
-                                            <span class="icon"><i class="fas fa-stop"></i></span>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Sample Task 3 -->
-                                <tr>
-                                    <td>Science Questions Grading</td>
-                                    <td>Physics Questions</td>
-                                    <td>Science Grading Rule</td>
-                                    <td>
-                                        <span class="tag status-tag status-pending">Pending</span>
-                                    </td>
-                                    <td>2023-06-16 10:45</td>
-                                    <td class="action-buttons">
-                                        <button class="button is-small is-info" disabled>
-                                            <span class="icon"><i class="fas fa-eye"></i></span>
-                                            <span>Results</span>
-                                        </button>
-                                        <button class="button is-small is-danger" onclick="deleteTask('task3')">
-                                            <span class="icon"><i class="fas fa-trash"></i></span>
-                                        </button>
-                                    </td>
-                                </tr>
-
-                                <!-- Sample Task 4 -->
-                                <tr>
-                                    <td>Literature Analysis</td>
-                                    <td>Poetry Collection</td>
-                                    <td>Literary Quality Rule</td>
-                                    <td>
-                                        <span class="tag status-tag status-failed">Failed</span>
-                                    </td>
-                                    <td>2023-06-14 16:20</td>
-                                    <td class="action-buttons">
-                                        <button class="button is-small is-info" onclick="viewError('task4')">
-                                            <span class="icon"><i class="fas fa-bug"></i></span>
-                                            <span>Error</span>
-                                        </button>
-                                        <button class="button is-small is-danger" onclick="deleteTask('task4')">
-                                            <span class="icon"><i class="fas fa-trash"></i></span>
-                                        </button>
-                                    </td>
-                                </tr>
+                            <tbody id="myTasks">
+                                
                             </tbody>
                         </table>
                     </div>
@@ -213,7 +100,7 @@
                         <p class="subtitle">Create your first scoring task to get started</p>
                         <button class="button is-primary" onclick="openNewTaskModal()">
                             <span class="icon"><i class="fas fa-plus"></i></span>
-                            <span>Create Task</span>
+                            <span>New Task</span>
                         </button>
                     </div>
                 </div>
@@ -243,10 +130,6 @@
                         <div class="select is-fullwidth">
                             <select id="taskDataset">
                                 <option value="">-- Select Dataset --</option>
-                                <option value="dataset1">Math Problem Answers (100 items)</option>
-                                <option value="dataset2">WWII Essays (50 items)</option>
-                                <option value="dataset3">Physics Questions (75 items)</option>
-                                <option value="dataset4">Poetry Collection (30 items)</option>
                             </select>
                         </div>
                     </div>
@@ -258,29 +141,14 @@
                         <div class="select is-fullwidth">
                             <select id="taskRule">
                                 <option value="">-- Select Rule --</option>
-                                <option value="rule1">Math Accuracy Rule</option>
-                                <option value="rule2">History Analysis Rule</option>
-                                <option value="rule3">Science Grading Rule</option>
-                                <option value="rule4">Literary Quality Rule</option>
                             </select>
                         </div>
                     </div>
                 </div>
-
-                <div class="field">
-                    <label class="label">Advanced Options</label>
-                    <div class="control">
-                        <label class="checkbox">
-                            <input type="checkbox" id="taskParallel">
-                            Enable parallel processing
-                        </label>
-                    </div>
-                    <p class="help">Faster processing but higher resource usage</p>
-                </div>
             </section>
             <footer class="modal-card-foot">
-                <button class="button is-success" onclick="createTask()">
-                    <span class="icon"><i class="fas fa-play"></i></span>
+                <button class="button is-success" onclick="createTask()" style="margin-right:10px">
+                    <i class="fas fa-play"></i>
                     <span>Run Task</span>
                 </button>
                 <button class="button" onclick="closeModal('newTaskModal')">Cancel</button>
@@ -293,57 +161,34 @@
         <div class="modal-background" onclick="closeModal('resultsModal')"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Task Results: <span id="resultsTaskName">Math Answers Scoring</span></p>
+                <p class="modal-card-title">Task Results: <span id="resultsTaskName"></span></p>
                 <button class="delete" aria-label="close" onclick="closeModal('resultsModal')"></button>
             </header>
             <section class="modal-card-body">
                 <div class="level">
                     <div class="level-left">
                         <div>
-                            <p><strong>Dataset:</strong> <span id="resultsDataset">Math Problem Answers</span></p>
-                            <p><strong>Rule:</strong> <span id="resultsRule">Math Accuracy Rule</span></p>
+                            <p><strong>Dataset:</strong> <span id="resultsDataset"></span></p>
+                            <p><strong>Rule:</strong> <span id="resultsRule"></span></p>
                         </div>
                     </div>
                     <div class="level-right">
                         <div class="tags has-addons">
                             <span class="tag is-dark">Status</span>
-                            <span class="tag is-success">Completed</span>
+                            <span class="tag is-success" id="resultsStatus">Completed</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="table-container">
-                    <table class="table is-fullwidth is-striped">
-                        <thead>
-                            <tr>
-                                <th>Text</th>
-                                <th>Score</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody id="resultsContent">
-                            <tr>
-                                <td>2+2 equals 4</td>
-                                <td>1.0</td>
-                                <td><button class="button is-small is-info">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>The square root of 9 is 3</td>
-                                <td>1.0</td>
-                                <td><button class="button is-small is-info">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>5 times 6 is 30</td>
-                                <td>1.0</td>
-                                <td><button class="button is-small is-info">View</button></td>
-                            </tr>
-                            <tr>
-                                <td>10 divided by 2 is 6</td>
-                                <td>0.0</td>
-                                <td><button class="button is-small is-info">View</button></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="container" id="resultsTable" style="display: none;">
+                    <div class="notification is-success">
+                        <strong>Completed at</strong> <span id="completeTime"></span>
+                    </div>
+                </div>
+                <div class="container" id="resultsError" style="display: none;">
+                    <div class="notification is-danger">
+                        <strong>Error:</strong> <span id="errorText"></span>
+                    </div>
                 </div>
 
                 <div class="box mt-4">
@@ -377,67 +222,8 @@
             document.body.classList.toggle('is-sidebar-open');
             document.querySelector('.navbar-burger').classList.toggle('is-active');
         }
-
-        // Task management functions
-        function openNewTaskModal() {
-            document.getElementById('newTaskModal').classList.add('is-active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('is-active');
-        }
-
-        function createTask() {
-            const name = document.getElementById('taskName').value;
-            const dataset = document.getElementById('taskDataset').value;
-            const rule = document.getElementById('taskRule').value;
-
-            if (!name || !dataset || !rule) {
-                alert('Please fill all required fields');
-                return;
-            }
-
-            // In a real app, this would create the task via API
-            alert(`Task "${name}" would be created in a real implementation`);
-            closeModal('newTaskModal');
-
-            // Reset form
-            document.getElementById('taskName').value = '';
-            document.getElementById('taskDataset').value = '';
-            document.getElementById('taskRule').value = '';
-            document.getElementById('taskParallel').checked = false;
-        }
-
-        function viewResults(taskId) {
-            // In a real app, this would fetch results for the task
-            document.getElementById('resultsModal').classList.add('is-active');
-        }
-
-        function deleteTask(taskId) {
-            if (confirm('Are you sure you want to delete this task?')) {
-                // In a real app, this would delete the task via API
-                alert(`Task ${taskId} would be deleted in a real implementation`);
-            }
-        }
-
-        function stopTask(taskId) {
-            if (confirm('Are you sure you want to stop this running task?')) {
-                // In a real app, this would stop the task via API
-                alert(`Task ${taskId} would be stopped in a real implementation`);
-            }
-        }
-
-        function viewError(taskId) {
-            alert(`Error details for task ${taskId} would be shown here`);
-        }
-
-        // Check if there are any tasks (for empty state)
-        window.addEventListener('DOMContentLoaded', function() {
-            // In a real app, you would check if there are actually tasks
-            // For now we're always showing the sample tasks
-            // document.getElementById('emptyTasks').style.display = 'block';
-        });
     </script>
+    <script src="static/tasks.js"></script>
     <script src="static/settings.js"></script>
 </body>
 
