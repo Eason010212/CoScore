@@ -192,6 +192,17 @@ def createTask():
     thread.start()
     return jsonify({'message': 'Task created successfully'})
 
+@app.route('/api/deleteTask', methods=['POST'])
+def deleteTask():
+    data = request.get_json()
+    task_name = data['task_name']
+    conn = sqlite3.connect('database.db')
+    conn.execute('DELETE FROM tasks WHERE task_name = ?', (task_name, ))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'message': 'Task deleted successfully'})
+
 def runTask(data_name, rule_name, task_name):
     try:
         print('Running task: ' + task_name)
@@ -250,6 +261,8 @@ def runTask(data_name, rule_name, task_name):
         conn.close()
         print('Task failed: ' + task_name)
         return 'Task failed'
+
+
 
 # if have 'running' tasks, run them
 def runAllTasks():

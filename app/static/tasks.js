@@ -19,6 +19,10 @@ function createTask() {
         alert('Please fill all required fields');
         return;
     }
+    if (allTasks.includes(name)) {
+        alert('Task name already exists, please choose another one');
+        return;
+    }
 
     $.ajax({
         url: '/api/createTask',
@@ -67,8 +71,20 @@ function viewResults(taskId) {
 
 function deleteTask(taskId) {
     if (confirm('Are you sure you want to delete this task?')) {
-        // In a real app, this would delete the task via API
-        alert(`Task ${taskId} would be deleted in a real implementation`);
+        $.ajax({
+            url: '/api/deleteTask',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                task_name: taskId
+            }),
+            success: function (response) {
+                location.reload();
+            },
+            error: function (error) {
+                alert('Error deleting task:', error);
+            }
+        });
     }
 }
 
@@ -119,7 +135,7 @@ window.addEventListener('DOMContentLoaded', function () {
                 for (var i = 0; i < data.length; i++) {
                     allTasks.push(data[i].task_name)
                     allTasksDict[data[i].task_name] = data[i]
-                    var tr = "<tr><td>" + data[i].data_name + "</td><td>" + data[i].rule_name + "</td><td>" + data[i].task_name + "</td>";
+                    var tr = "<tr><td>" + data[i].task_name + "</td><td>" + data[i].data_name + "</td><td>" + data[i].rule_name + "</td>";
                     if(data[i].status == 'completed'){
                         tr += "<td><span class='tag status-tag status-completed'>Completed</span></td>";
                     }
