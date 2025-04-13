@@ -84,6 +84,23 @@ def getData():
     conn.close()
     return jsonify(data)
 
+@app.route('/api/getDataByName', methods=['POST'])
+def getDataByName():
+    data = request.get_json()
+    name = data['name']
+    conn = sqlite3.connect('database.db')
+    cursor = conn.execute('SELECT * FROM data WHERE name = ?', (name,))
+    row = cursor.fetchone()
+    conn.close()
+    return jsonify({
+        'name': row[0],
+        'desc': row[1],
+        'type': row[2],
+        'data': row[3],
+        'count': row[4],
+        'created': row[5]
+    })
+
 @app.route('/api/deleteData', methods=['POST'])
 def deleteData():
     data = request.get_json()
@@ -221,7 +238,6 @@ def runTask(data_name, rule_name, task_name):
         }
         cursor = conn.execute('SELECT * FROM rules WHERE name = ?', (rule_name, ))
         rule = cursor.fetchone()
-        print(rule[3])
         rule = {
             'name': rule[0],
             'prompt': rule[1],
@@ -234,12 +250,13 @@ def runTask(data_name, rule_name, task_name):
         # run the task
         ruleObj = Rule(rule['rule'])
         allData = []
-        for i in range(1, int(data['count'])):
-            allData.append(ruleObj.calculate(data['data'][i].split(',')[0].split('-')))
+        for i in range(0, int(data['count'])):
+            allData.append(ruleObj.calculate(data['data'][i+1].split(',')[0].split('-')))
         allScore = []
         allLog = []
         for i in range(len(allData)):
-            score, debugInfo = ruleObj.calculate(allData[i])
+            score, debugInfo = allData[i]
+            print(score)
             del debugInfo['calMemory']
             allScore.append(score)
             allLog.append(debugInfo)

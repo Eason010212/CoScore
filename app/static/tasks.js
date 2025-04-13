@@ -2,6 +2,7 @@
 function openNewTaskModal() {
     document.getElementById('newTaskModal').classList.add('is-active');
 }
+
 function openNewResultModal() {
     document.getElementById('resultsModal').classList.add('is-active');
 }
@@ -33,10 +34,10 @@ function createTask() {
             rule_name: rule,
             task_name: name
         }),
-        success: function (response) {
+        success: function(response) {
             location.reload();
         },
-        error: function (error) {
+        error: function(error) {
             alert('Error creating task:', error);
         }
     });
@@ -57,13 +58,48 @@ function viewResults(taskId) {
         document.getElementById('resultsStatus').className = 'tag is-success';
         document.getElementById('resultsError').style.display = 'none';
         document.getElementById('resultsTable').style.display = 'block';
+        document.getElementById('stat').style.display = 'block';
         document.getElementById('completeTime').textContent = allTasksDict[taskId].executed;
-    }
-    else if (allTasksDict[taskId].status == 'failed') {
+        var result = JSON.parse(allTasksDict[taskId].result)
+        var scores = result['scores']
+        var avgScore = 0
+        for (var i = 0; i < scores.length; i++) {
+            avgScore += scores[i]
+        }
+        avgScore = avgScore / scores.length
+        var maxScore = Math.max(...scores)
+        var minScore = Math.min(...scores)
+        document.getElementById('myAvg').textContent = avgScore.toFixed(2)
+        document.getElementById('myMax').textContent = maxScore.toFixed(2)
+        document.getElementById('myMin').textContent = minScore.toFixed(2)
+        $.ajax({
+            url: '/api/getDataByName',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                name: allTasksDict[taskId].data_name
+            }),
+            success: function(response) {
+                var oriData = response.data.split('\n')
+                var csvData = 'text,score'
+                for (var i = 1; i < oriData.length; i++) {
+                    var text = oriData[i].split(',')[0]
+                    var score = scores[i - 1]
+                    csvData += '\n' + text + ',' + score
+                }
+                console.log('data:text/csv;charset=utf-8,' + encodeURIComponent(csvData))
+                $('#downloadCSV').attr('href', 'data:text/csv;charset=utf-8, ' + encodeURIComponent(csvData))
+            },
+            error: function(error) {
+                alert('Error fetching data:', error);
+            }
+        })
+    } else if (allTasksDict[taskId].status == 'failed') {
         document.getElementById('resultsStatus').textContent = 'Failed';
         document.getElementById('resultsStatus').className = 'tag is-danger';
         document.getElementById('resultsError').style.display = 'block';
         document.getElementById('resultsTable').style.display = 'none';
+        document.getElementById('stat').style.display = 'none';
         document.getElementById('errorText').textContent = allTasksDict[taskId].result;
     }
     openNewResultModal();
@@ -78,10 +114,10 @@ function deleteTask(taskId) {
             data: JSON.stringify({
                 task_name: taskId
             }),
-            success: function (response) {
+            success: function(response) {
                 location.reload();
             },
-            error: function (error) {
+            error: function(error) {
                 alert('Error deleting task:', error);
             }
         });
@@ -90,18 +126,18 @@ function deleteTask(taskId) {
 
 
 // Check if there are any tasks (for empty state)
-window.addEventListener('DOMContentLoaded', function () {
+window.addEventListener('DOMContentLoaded', function() {
     $.ajax({
         url: '/api/getData',
         type: 'GET',
         dataType: 'json',
-        success: function (data) {
+        success: function(data) {
             for (var i = 0; i < data.length; i++) {
                 var datasetName = data[i].name + ' (' + data[i].type + ', ' + data[i].count + ' items)';
                 document.getElementById('taskDataset').innerHTML += `<option value="${data[i].name}">${datasetName}</option>`;
             }
         },
-        error: function (error) {
+        error: function(error) {
             alert('Error fetching datasets:', error);
         }
     });
@@ -109,12 +145,12 @@ window.addEventListener('DOMContentLoaded', function () {
         url: '/api/getRules',
         type: 'GET',
         dataType: 'json',
-        success: function (data) {
+        success: function(data) {
             for (var i = 0; i < data.length; i++) {
                 document.getElementById('taskRule').innerHTML += `<option value="${data[i].name}">${data[i].name}</option>`;
             }
         },
-        error: function (error) {
+        error: function(error) {
             alert('Error fetching rules:', error);
         }
     });
@@ -124,42 +160,37 @@ window.addEventListener('DOMContentLoaded', function () {
         url: '/api/getTasks',
         type: 'GET',
         dataType: 'json',
-        success: function (data) {
-            if(data.length === 0) {
+        success: function(data) {
+            if (data.length === 0) {
                 document.getElementById('emptyTasks').style.display = 'block';
                 document.getElementById('myTaskTable').style.display = 'none';
-            }
-            else{
+            } else {
                 document.getElementById('emptyTasks').style.display = 'none';
                 document.getElementById('myTaskTable').style.display = 'block';
                 for (var i = 0; i < data.length; i++) {
                     allTasks.push(data[i].task_name)
                     allTasksDict[data[i].task_name] = data[i]
                     var tr = "<tr><td>" + data[i].task_name + "</td><td>" + data[i].data_name + "</td><td>" + data[i].rule_name + "</td>";
-                    if(data[i].status == 'completed'){
+                    if (data[i].status == 'completed') {
                         tr += "<td><span class='tag status-tag status-completed'>Completed</span></td>";
-                    }
-                    else if(data[i].status == 'running'){
+                    } else if (data[i].status == 'running') {
                         tr += "<td><span class='tag status-tag status-running'>Running</span></td>";
-                    }
-                    else if(data[i].status == 'failed'){
+                    } else if (data[i].status == 'failed') {
                         tr += "<td><span class='tag status-tag status-failed'>Failed</span></td>";
                     }
                     // if not running, view results; if running, view results (disabled)
                     tr += "<td>" + data[i].created + "</td>";
                     tr += "<td class='action-buttons'>";
-                    if(data[i].status == 'running') {
+                    if (data[i].status == 'running') {
                         tr += "<button disabled class='button is-small is-info' onclick='viewResults(\"" + data[i].task_name + "\")'>";
-                    }
-                    else {
+                    } else {
                         tr += "<button class='button is-small is-info' onclick='viewResults(\"" + data[i].task_name + "\")'>";
                     }
                     tr += "<span class='icon'><i class='fas fa-eye'></i></span>";
                     tr += "<span>Results</span></button>";
-                    if(data[i].status == 'running') {
+                    if (data[i].status == 'running') {
                         tr += "<button disabled class='button is-small is-danger' style='margin-left:10px' onclick='deleteTask(\"" + data[i].task_name + "\")'>";
-                    }
-                    else {
+                    } else {
                         tr += "<button class='button is-small is-danger' style='margin-left:10px' onclick='deleteTask(\"" + data[i].task_name + "\")'>";
                     }
                     tr += "<span class='icon'><i class='fas fa-trash'></i></span>";
@@ -169,9 +200,9 @@ window.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('myTasks').innerHTML += tr;
                 }
             }
-            
+
         },
-        error: function (error) {
+        error: function(error) {
             alert('Error fetching tasks:', error);
         }
     });

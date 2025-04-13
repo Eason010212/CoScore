@@ -113,10 +113,12 @@ body {
 
 .tag-labeled {
     background-color: #48c774 !important;
+    color: white;
 }
 
 .tag-unlabeled {
     background-color: #3273dc !important;
+    color: white;
 }
 
 .content-section {
@@ -217,4 +219,8 @@ body {
 .modal-card {
     width: 90%;
     max-width: 800px;
+}
+
+.menu-list i {
+    width: 16px;
 }

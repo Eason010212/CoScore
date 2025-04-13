@@ -169,7 +169,8 @@ function exportDataset() {
 
 // Handle file input display
 document.getElementById('csvFile').addEventListener('change', function(e) {
-    const fileName = e.target.files[0] ? e.target.files[0].name : 'No file selected';
+    console.log(e)
+    const fileName = e.target.files[0] ? e.target.files[0].name : langArr[currentLang]['no-file-selected'];
     document.getElementById('fileName').textContent = fileName;
 
     if (e.target.files[0]) {
@@ -178,7 +179,7 @@ document.getElementById('csvFile').addEventListener('change', function(e) {
         reader.onload = function(event) {
             document.getElementById('csvData').value = event.target.result;
         };
-        reader.readAsText(e.target.files[0]);
+        reader.readAsText(e.target.files[0], 'UTF-8');
     }
 });
 allData = []
@@ -203,7 +204,7 @@ window.addEventListener('DOMContentLoaded', function() {
                                     <div class="media">
                                         <div class="media-content">
                                             <p class="title is-4">${dataset.name}</p>
-                                            <p class="subtitle is-6">
+                                            <p class="subtitle is-6" style="margin-top:5px">
                                                 <span class="tag is-light">${dataset.count} items</span>
                                                 <span class="tag tag-${dataset.type}">${dataset.type=="labeled" ? 'Labeled' : 'Unlabeled'}</span>
                                             </p>
@@ -215,9 +216,9 @@ window.addEventListener('DOMContentLoaded', function() {
                                     </div>
                                 </div>
                                 <footer class="card-footer">
-                                    <a href="#" class="card-footer-item" onclick="viewDataset('${dataset.name}')">View</a>
+                                    <a href="#" class="card-footer-item" onclick="viewDataset('${dataset.name}')">` + langArr['view'][currentLang] + `</a>
                                     
-                                    <a href="#" class="card-footer-item" onclick="confirmDelete('${dataset.name}')">Delete</a>
+                                    <a href="#" class="card-footer-item" onclick="confirmDelete('${dataset.name}')">` + langArr['delete'][currentLang] + `</a>
                                 </footer>
                             </div>
                         </div>
