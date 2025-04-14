@@ -274,6 +274,134 @@ var langArr = {
     'step-5-btn': {
         '中文': '前往配置',
         'EN': 'Configure'
+    },
+    'rule-prompt': {
+        '中文': '规则提示词',
+        'EN': 'Prompt for Rule Generation'
+    },
+    'rule-prompt-place': {
+        '中文': '描述您想要生成的评分规则...',
+        'EN': 'Describe the scoring criteria you want to generate...'
+    },
+    'generate-rule': {
+        '中文': '生成规则',
+        'EN': 'Generate Rule'
+    },
+    'save-rule': {
+        '中文': '保存规则',
+        'EN': 'Save Rule'
+    },
+    'generated-rule': {
+        '中文': '结构化评分规则（JSON）',
+        'EN': 'Generated Rule (JSON)'
+    },
+    'test-rule': {
+        '中文': '测试规则',
+        'EN': 'Test Rule'
+    },
+    'test-rule-place': {
+        '中文': '输入您想要测试的答案...',
+        'EN': 'Enter text to test the rule...'
+    },
+    'test-rule': {
+        '中文': '测试规则',
+        'EN': 'Test Rule'
+    },
+    'test-result': {
+        '中文': '测试结果',
+        'EN': 'Test Result'
+    },
+    'saved-rules': {
+        '中文': '已保存的规则',
+        'EN': 'Saved Rules'
+    },
+    'new-rule': {
+        '中文': '新建规则',
+        'EN': 'New Rule'
+    },
+    'no-saved-rules-yet': {
+        '中文': '暂无已保存的规则',
+        'EN': 'No saved rules yet'
+    },
+    'generate-first-rule': {
+        '中文': '生成您的第一条规则',
+        'EN': 'Generate your first rule to get started'
+    },
+    'new-task': {
+        '中文': '新建任务',
+        'EN': 'New Task'
+    },
+    'no-tasks-yet': {
+        '中文': '暂无任务',
+        'EN': 'No tasks yet'
+    },
+    'create-first-task': {
+        '中文': '创建您的第一个任务',
+        'EN': 'Create your first scoring task to get started'
+    },
+    'task-name': {
+        '中文': '任务名称',
+        'EN': 'Task Name'
+    },
+    'task-name-place': {
+        '中文': '例：数学测验评分',
+        'EN': 'e.g. Math Answers Scoring'
+    },
+    'select-dataset': {
+        '中文': '选择数据集',
+        'EN': 'Select Dataset'
+    },
+    'select-rule': {
+        '中文': '选择评分规则',
+        'EN': 'Select Scoring Rule'
+    },
+    'please-select': {
+        '中文': '--请选择--',
+        'EN': 'Please Select'
+    },
+    'run-task': {
+        '中文': '运行任务',
+        'EN': 'Run Task'
+    },
+    'close': {
+        '中文': '关闭',
+        'EN': 'Close'
+    },
+    'dataset': {
+        '中文': '数据集',
+        'EN': 'Dataset'
+    },
+    'rule': {
+        '中文': '评分规则',
+        'EN': 'Rule'
+    },
+    'status': {
+        '中文': '状态',
+        'EN': 'Status'
+    },
+    'created-at': {
+        '中文': '创建时间',
+        'EN': 'Created At'
+    },
+    'actions': {
+        '中文': '操作',
+        'EN': 'Actions'
+    },
+    'api-provider': {
+        '中文': 'API 提供商',
+        'EN': 'API Provider'
+    },
+    'model': {
+        '中文': '模型',
+        'EN': 'Model'
+    },
+    'save-settings': {
+        '中文': '保存设置',
+        'EN': 'Save Settings'
+    },
+    'enter-api-key': {
+        '中文': '请输入您的 API KEY',
+        'EN': 'Please enter your API KEY'
     }
 }
 

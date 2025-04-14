@@ -95,7 +95,8 @@ function testRule() {
         return;
     }
     //ruleContent remove '```json' and '```'
-    var rule = ruleContent.replace('```json', '').replace('```', '').trim();
+    var rule = ruleContent.replace('```json', '').replace('```', '').replaceAll(" ", "").trim();
+    console.log(rule)
     var ruleContent = JSON.parse(rule);
 
     if (!testText) {

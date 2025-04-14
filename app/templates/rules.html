@@ -9,14 +9,14 @@
     <link rel="stylesheet" href="static/font-awesome.min.css">
     <link rel="stylesheet" href="static/main.css">
     <script src="static/jquery.min.js"></script>
-
+    <script src="static/lang.js"></script>
 </head>
 
 <body>
     <nav class="navbar is-primary" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="#">
-                <strong>CoScore</strong>
+                <strong class="lang" data-lang="coscore">CoScore</strong>
             </a>
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" onclick="toggleSidebar()">
                 <span aria-hidden="true"></span>
@@ -28,44 +28,43 @@
 
     <div class="main-content">
         <aside class="sidebar menu p-4">
-            <p class="menu-label">General</p>
+            <p class="menu-label lang" data-lang="general">General</p>
             <ul class="menu-list">
-                <li><a href="../"><i class="fas fa-home mr-2"></i> Home</a></li>
-                <li><a href="data"><i class="fas fa-table mr-2"></i> Data</a></li>
-                <li><a class="is-active" href="#"><i class="fas fa-code mr-2"></i> Rules</a></li>
-                <li><a href="tasks"><i class="fas fa-tasks mr-2"></i> Tasks</a></li>
+                <li><a href="../" class="lang" data-lang="home"><i class="fas fa-home mr-2"></i> Home</a></li>
+                <li><a href="data" class="lang" data-lang="data"><i class="fas fa-table mr-2"></i> Data</a></li>
+                <li><a class="is-active lang" data-lang="rules" href="#"><i class="fas fa-code mr-2"></i> Rules</a></li>
+                <li><a href="tasks" class="lang" data-lang="tasks"><i class="fas fa-tasks mr-2"></i> Tasks</a></li>
             </ul>
 
-            <p class="menu-label">Guide</p>
+            <p class="menu-label lang" data-lang="guide">Guide</p>
             <ul class="menu-list">
-                <li><a href="manual"><i class="fas fa-book mr-2"></i> Manual</a></li>
+                <li><a href="manual" class="lang" data-lang="manual"><i class="fas fa-book mr-2"></i> Manual</a></li>
             </ul>
 
-            <p class="menu-label">Settings</p>
+            <p class="menu-label lang" data-lang="settings">Settings</p>
             <ul class="menu-list">
-                <li><a onclick="openLLMSettingModal()"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
+                <li><a onclick="openLLMSettingModal()" class="lang" data-lang="llm-settings"><i class="fas fa-key mr-2"></i> LLM Settings</a></li>
             </ul>
 
-            <p class="menu-label">Link</p>
+            <p class="menu-label lang" data-lang="link">Link</p>
             <ul class="menu-list">
-                <li><a href="https://github.com/Eason010212/CoScore" target="_blank"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
+                <li><a href="https://github.com/Eason010212/CoScore" target="_blank" class="lang" data-lang="github-repo"><i class="fas fa-link mr-2"></i> Github Repo</a></li>
             </ul>
         </aside>
 
         <!-- 右侧页面内容 -->
         <main class="page-content">
             <div class="container">
-                <h1 class="title">Rules</h1>
-                <h2 class="subtitle">Create scoring rules with the help of LLM</h2>
+                <h1 class="title lang" data-lang="rules">Rules</h1>
 
                 <div class="columns">
                     <!-- 规则生成区 -->
                     <div class="column is-two-thirds">
                         <div class="box rule-section">
                             <div class="field">
-                                <label class="label">Prompt for Rule Generation</label>
+                                <label class="label lang" data-lang="rule-prompt">Prompt for Rule Generation</label>
                                 <div class="control">
-                                    <textarea class="textarea" style="min-height: 100px;" id="rulePrompt" placeholder="Describe the scoring criteria you want to generate..."></textarea>
+                                    <textarea class="textarea lang" data-lang-place="rule-prompt-place" style="min-height: 100px;" id="rulePrompt" placeholder="Describe the scoring criteria you want to generate..."></textarea>
                                 </div>
                             </div>
 
@@ -73,26 +72,26 @@
                                 <div class="control">
                                     <button class="button is-primary" id="generateBtn" onclick="generateRule()">
                                         <span class="icon"><i class="fas fa-magic"></i></span>
-                                        <span>Generate Rule</span>
+                                        <span class="lang" data-lang="generate-rule">Generate Rule</span>
                                     </button>
                                     <button class="button is-info is-outlined" id="saveBtn" onclick="saveRule()">
                                         <span class="icon"><i class="fas fa-save"></i></span>
-                                        <span>Save Rule</span>
+                                        <span class="lang" data-lang="save-rule">Save Rule</span>
                                     </button>
                                 </div>
                             </div>
 
                             <div class="field">
-                                <label class="label">Generated Rule (JSON)</label>
+                                <label class="label lang" data-lang="generated-rule">Generated Rule (JSON)</label>
                                 <div class="control">
                                     <div class="code-editor" id="generatedRule" contenteditable="true" style="min-height: 100px;"></div>
                                 </div>
                             </div>
 
                             <div class="field">
-                                <label class="label">Test Rule</label>
+                                <label class="label lang" data-lang="test-rule">Test Rule</label>
                                 <div class="control">
-                                    <textarea class="textarea" id="testText" style="min-height: 100px;" placeholder="Enter text to test the rule..."></textarea>
+                                    <textarea class="textarea lang" data-lang-place="test-rule-place" id="testText" style="min-height: 100px;" placeholder="Enter text to test the rule..."></textarea>
                                 </div>
 
                             </div>
@@ -101,7 +100,7 @@
                                 <div class="control">
                                     <button class="button is-info" id="testBtn" onclick="testRule()">
                                         <span class="icon"><i class="fas fa-play"></i></span>
-                                        <span>Test Rule</span>
+                                        <span class="lang" data-lang="test-rule">Test Rule</span>
                                     </button>
                                 </div>
                             </div>
@@ -113,7 +112,7 @@
                             </div>
 
                             <div id="testResult" class="test-result" style="display: none;">
-                                <h4 class="title is-6">Test Result</h4>
+                                <h4 class="title is-6 lang" data-lang="test-result">Test Result</h4>
                                 <div id="resultContent"></div>
                             </div>
                         </div>
@@ -124,12 +123,12 @@
                         <div class="box">
                             <div class="level">
                                 <div class="level-left">
-                                    <h3 class="title is-5">Saved Rules</h3>
+                                    <h3 class="title is-5 lang" data-lang="saved-rules">Saved Rules</h3>
                                 </div>
                                 <div class="level-right">
                                     <button class="button is-primary" onclick="newRule()">
                                         <span class="icon"><i class="fas fa-plus"></i></span>
-                                        <span>New Rule</span>
+                                        <span class="lang" data-lang="new-rule">New Rule</span>
                                     </button>
                                 </div>
                             </div>
@@ -142,8 +141,8 @@
                                 <span class="icon is-large has-text-grey-light">
                                     <i class="fas fa-code fa-3x"></i>
                                 </span>
-                                <p class="subtitle">No saved rules yet</p>
-                                <p>Generate your first rule to get started</p>
+                                <p class="subtitle lang" data-lang="no-saved-rules-yet">No saved rules yet</p>
+                                <p data-lang="generate-first-rule" class="lang">Generate your first rule to get started</p>
                             </div>
                         </div>
                     </div>

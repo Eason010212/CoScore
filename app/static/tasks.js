@@ -54,7 +54,7 @@ function viewResults(taskId) {
     document.getElementById('resultsDataset').textContent = allTasksDict[taskId].data_name;
     document.getElementById('resultsRule').textContent = allTasksDict[taskId].rule_name;
     if (allTasksDict[taskId].status == 'completed') {
-        document.getElementById('resultsStatus').textContent = 'Running';
+        document.getElementById('resultsStatus').textContent = 'Completed';
         document.getElementById('resultsStatus').className = 'tag is-success';
         document.getElementById('resultsError').style.display = 'none';
         document.getElementById('resultsTable').style.display = 'block';
@@ -80,15 +80,145 @@ function viewResults(taskId) {
                 name: allTasksDict[taskId].data_name
             }),
             success: function(response) {
+                var stdResults = []
                 var oriData = response.data.split('\n')
                 var csvData = 'text,score'
                 for (var i = 1; i < oriData.length; i++) {
                     var text = oriData[i].split(',')[0]
+                    if (response.type == 'labeled') {
+                        stdResults.push(parseInt(oriData[i].split(',')[1]))
+                    }
                     var score = scores[i - 1]
                     csvData += '\n' + text + ',' + score
                 }
-                console.log('data:text/csv;charset=utf-8,' + encodeURIComponent(csvData))
                 $('#downloadCSV').attr('href', 'data:text/csv;charset=utf-8, ' + encodeURIComponent(csvData))
+                document.getElementById('fig').style.display = 'block';
+                // #fig-left 放scores的频数分布直方图
+                // #fig-right 放scores和stdResults的热力图
+                var myChart = echarts.init(document.getElementById('fig-left'));
+                var options = {
+                    title: {
+                        text: 'Scores Distribution',
+                        left: 'center'
+                    },
+                    tooltip: {},
+                    xAxis: {
+                        type: 'category',
+                        data: Array.from(new Set(scores)).sort((a, b) => a - b)
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [{
+                        name: 'Frequency',
+                        type: 'bar',
+                        data: Array.from({ length: scores.length }, (_, i) => scores.filter(x => x === i).length)
+                    }]
+                };
+                // 图表无边距
+                options.grid = {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                };
+                myChart.setOption(options);
+                // #fig-right 放scores和stdResults的热力图
+                if (response.type == 'labeled') {
+                    var myChart = echarts.init(document.getElementById('fig-right'));
+
+                    // 准备数据 - 格式为[[y轴索引, x轴索引, 值], ...]
+                    const scoreCategories = Array.from(new Set(scores)).sort((a, b) => a - b);
+                    const resultCategories = Array.from(new Set(stdResults)).sort((a, b) => a - b);
+
+                    // 创建映射表
+                    const scoreIndexMap = new Map(scoreCategories.map((v, i) => [v, i]));
+                    const resultIndexMap = new Map(resultCategories.map((v, i) => [v, i]));
+
+                    // 统计每个组合的出现次数
+                    const countMap = {};
+                    scores.forEach((score, i) => {
+                        const result = stdResults[i];
+                        const key = `${score}-${result}`;
+                        countMap[key] = (countMap[key] || 0) + 1;
+                    });
+
+                    // 转换为热力图数据格式
+                    const heatmapData = [];
+                    scoreCategories.forEach(score => {
+                        resultCategories.forEach(result => {
+                            const key = `${score}-${result}`;
+                            if (countMap[key]) {
+                                heatmapData.push([
+                                    resultIndexMap.get(result), // y轴索引
+                                    scoreIndexMap.get(score), // x轴索引
+                                    countMap[key] // 值
+                                ]);
+                            }
+                        });
+                    });
+
+                    var options = {
+                        title: {
+                            text: 'Computed Scores vs. Labeled Results',
+                            left: 'center'
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: scoreCategories,
+                            splitArea: {
+                                show: true
+                            },
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: resultCategories,
+                            splitArea: {
+                                show: true
+                            },
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: Math.max(...Object.values(countMap), 10), // 至少显示0-10的范围
+                            calculable: true,
+                            orient: 'horizontal',
+                            left: 'center',
+                            bottom: '5%',
+                            inRange: {
+                                color: ['#313695', '#4575b4', '#74add1', '#abd9e9', '#e0f3f8', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                            }
+                        },
+                        series: [{
+                            name: 'Frequency',
+                            type: 'heatmap',
+                            data: heatmapData,
+                            label: {
+                                show: true,
+                                formatter: function(params) {
+                                    return params.data[2]; // 显示计数值
+                                }
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            },
+                            itemStyle: {
+                                borderWidth: 1,
+                                borderColor: '#fff'
+                            }
+                        }]
+                    };
+
+                    myChart.setOption(options);
+                }
             },
             error: function(error) {
                 alert('Error fetching data:', error);
@@ -99,6 +229,7 @@ function viewResults(taskId) {
         document.getElementById('resultsStatus').className = 'tag is-danger';
         document.getElementById('resultsError').style.display = 'block';
         document.getElementById('resultsTable').style.display = 'none';
+        document.getElementById('fig').style.display = 'none';
         document.getElementById('stat').style.display = 'none';
         document.getElementById('errorText').textContent = allTasksDict[taskId].result;
     }

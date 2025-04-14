@@ -24,12 +24,12 @@ const inject = `<div class="modal" id="LLMSettingModal">
         <div class="modal-background" onclick="closeModal('LLMSettingModal')"></div>
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">LLM API Settings</p>
+                <p class="modal-card-title">` + langArr['llm-settings'][currentLang] + `</p>
                 <button class="delete" aria-label="close" onclick="closeModal('LLMSettingModal')"></button>
             </header>
             <section class="modal-card-body">
                 <div class="field">
-                    <label class="label">API Provider</label>
+                    <label class="label">` + langArr['api-provider'][currentLang] + `</label>
                     <div class="control">
                         <div class="select is-fullwidth">
                             <select id="apiReferer">
@@ -42,13 +42,12 @@ const inject = `<div class="modal" id="LLMSettingModal">
                 <div class="field">
                     <label class="label">API Key</label>
                     <div class="control">
-                        <input class="input" type="password" id="apiKey" placeholder="Enter your API key">
+                        <input class="input" type="password" id="apiKey" placeholder="` + langArr['enter-api-key'][currentLang] + `">
                     </div>
-                    <p class="help">Your API key will be stored securely</p>
                 </div>
 
                 <div class="field">
-                    <label class="label">Model</label>
+                    <label class="label">` + langArr['model'][currentLang] + `</label>
                     <div class="control">
                         <div class="select is-fullwidth">
                             <select id="apiModel">
@@ -57,15 +56,14 @@ const inject = `<div class="modal" id="LLMSettingModal">
                             </select>
                         </div>
                     </div>
-                    <p class="help">Select the model you want to use</p>
                 </div>
             </section>
             <footer class="modal-card-foot">
                 <button class="button is-success" onclick="saveLLMSettings()" style="margin-right:10px">
                     <span class="icon"><i class="fas fa-save"></i></span>
-                    <span>Save Settings</span>
+                    <span>` + langArr['save-settings'][currentLang] + `</span>
                 </button>
-                <button class="button" onclick="closeModal('LLMSettingModal')">Cancel</button>
+                <button class="button" onclick="closeModal('LLMSettingModal')">` + langArr['cancel'][currentLang] + `</button>
             </footer>
         </div>
     </div>`
