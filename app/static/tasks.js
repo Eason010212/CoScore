@@ -95,6 +95,7 @@ function viewResults(taskId) {
                 document.getElementById('fig').style.display = 'block';
                 // #fig-left 放scores的频数分布直方图
                 // #fig-right 放scores和stdResults的热力图
+                console.log(scores)
                 var myChart = echarts.init(document.getElementById('fig-left'));
                 var options = {
                     title: {
@@ -104,7 +105,7 @@ function viewResults(taskId) {
                     tooltip: {},
                     xAxis: {
                         type: 'category',
-                        data: Array.from(new Set(scores)).sort((a, b) => a - b)
+                        data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
                     },
                     yAxis: {
                         type: 'value'
@@ -112,7 +113,7 @@ function viewResults(taskId) {
                     series: [{
                         name: 'Frequency',
                         type: 'bar',
-                        data: Array.from({ length: scores.length }, (_, i) => scores.filter(x => x === i).length)
+                        data: Array.from({ length: scores.length }, (_, i) => scores.filter(x => Math.round(x) === i).length)
                     }]
                 };
                 // 图表无边距
@@ -128,8 +129,8 @@ function viewResults(taskId) {
                     var myChart = echarts.init(document.getElementById('fig-right'));
 
                     // 准备数据 - 格式为[[y轴索引, x轴索引, 值], ...]
-                    const scoreCategories = Array.from(new Set(scores)).sort((a, b) => a - b);
-                    const resultCategories = Array.from(new Set(stdResults)).sort((a, b) => a - b);
+                    const scoreCategories = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                    const resultCategories = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
                     // 创建映射表
                     const scoreIndexMap = new Map(scoreCategories.map((v, i) => [v, i]));
@@ -138,8 +139,8 @@ function viewResults(taskId) {
                     // 统计每个组合的出现次数
                     const countMap = {};
                     scores.forEach((score, i) => {
-                        const result = stdResults[i];
-                        const key = `${score}-${result}`;
+                        const result = Math.round(stdResults[i]);
+                        const key = `${Math.round(score)}-${result}`;
                         countMap[key] = (countMap[key] || 0) + 1;
                     });
 
@@ -158,9 +159,64 @@ function viewResults(taskId) {
                         });
                     });
 
+                    function calculateQWK(raterA, raterB) {
+                        // 获取分类类别
+                        const categories = new Set([...raterA, ...raterB]);
+                        const categoryList = Array.from(categories).sort((a, b) => a - b);
+                        const numCategories = categoryList.length;
+
+                        // 构建混淆矩阵
+                        const confusionMatrix = Array.from({ length: numCategories }, () => Array(numCategories).fill(0));
+                        for (let i = 0; i < raterA.length; i++) {
+                            const row = categoryList.indexOf(raterA[i]);
+                            const col = categoryList.indexOf(raterB[i]);
+                            confusionMatrix[row][col]++;
+                        }
+
+                        // 构建权重矩阵
+                        const weightMatrix = Array.from({ length: numCategories }, () => Array(numCategories).fill(0));
+                        for (let i = 0; i < numCategories; i++) {
+                            for (let j = 0; j < numCategories; j++) {
+                                weightMatrix[i][j] = (i - j) ** 2;
+                            }
+                        }
+
+                        // 计算边缘分布
+                        const rowSums = confusionMatrix.map(row => row.reduce((a, b) => a + b, 0));
+                        const colSums = confusionMatrix[0].map((_, colIndex) => confusionMatrix.reduce((a, row) => a + row[colIndex], 0));
+                        const totalSum = rowSums.reduce((a, b) => a + b, 0);
+
+                        // 计算观察一致性 P_o
+                        let Po = 0;
+                        for (let i = 0; i < numCategories; i++) {
+                            for (let j = 0; j < numCategories; j++) {
+                                Po += confusionMatrix[i][j] * weightMatrix[i][j];
+                            }
+                        }
+                        Po /= totalSum;
+
+                        // 计算期望一致性 P_e
+                        let Pe = 0;
+                        for (let i = 0; i < numCategories; i++) {
+                            for (let j = 0; j < numCategories; j++) {
+                                Pe += (rowSums[i] * colSums[j] / totalSum) * weightMatrix[i][j];
+                            }
+                        }
+                        Pe /= totalSum;
+
+                        // 计算QWK
+                        const QWK = 1 - (Po / Pe);
+
+                        return QWK;
+                    }
+                    // 计算QWK
+                    const qwk = calculateQWK(scores.map(Math.round), stdResults.map(Math.round));
+                    // 在图表上显示QWK
+
+
                     var options = {
                         title: {
-                            text: 'Computed Scores vs. Labeled Results',
+                            text: 'QWK: ' + qwk.toFixed(3),
                             left: 'center'
                         },
                         grid: {
