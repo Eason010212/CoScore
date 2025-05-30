@@ -23,9 +23,10 @@ function createSplitLanguageSwitcher() {
     });
 
     // 当前语言显示部分（左侧）
-    const currentLang = document.createElement('div');
-    currentLang.textContent = '中文';
-    Object.assign(currentLang.style, {
+    const currentLangbox = document.createElement('div');
+    currentLangbox.id = 'current-language';
+    currentLangbox.textContent = '中文';
+    Object.assign(currentLangbox.style, {
         padding: '0 12px',
         background: '#4a6baf',
         color: 'white',
@@ -34,6 +35,7 @@ function createSplitLanguageSwitcher() {
 
     // 切换语言按钮部分（右侧）
     const switchButton = document.createElement('div');
+    switchButton.id = 'switch-language-button';
     switchButton.textContent = 'EN';
     Object.assign(switchButton.style, {
         padding: '0 12px',
@@ -59,12 +61,12 @@ function createSplitLanguageSwitcher() {
     switchButton.addEventListener('click', () => {
         isChinese = !isChinese;
         if (isChinese) {
-            currentLang.textContent = '中文';
+            currentLangbox.textContent = '中文';
             switchButton.textContent = 'EN';
             switchLang('中文')
             localStorage.setItem('lang', '中文');
         } else {
-            currentLang.textContent = 'EN';
+            currentLangbox.textContent = 'EN';
             switchButton.textContent = '中文';
             switchLang('EN')
             localStorage.setItem('lang', 'EN');
@@ -72,11 +74,13 @@ function createSplitLanguageSwitcher() {
     });
 
     // 将两部分添加到容器
-    switcher.appendChild(currentLang);
+    switcher.appendChild(currentLangbox);
     switcher.appendChild(switchButton);
 
     // 将容器添加到body
     document.body.appendChild(switcher);
+    switchButton.textContent = currentLang === '中文' ? 'EN' : '中文';
+    currentLangbox.textContent = currentLang;
 }
 
 // 页面加载完成后创建按钮
@@ -435,5 +439,7 @@ function switchLang(lang) {
 currentLang = localStorage.getItem('lang') || '中文';
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('当前语言:', currentLang);
     switchLang(currentLang);
+    
 });
